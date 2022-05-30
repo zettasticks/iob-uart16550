@@ -1,15 +1,15 @@
-UART_DIR:=../..
+UART16550_DIR:=../..
 
 incdir:=-I
 defmacro:=-D
 
-include $(UART_DIR)/hardware/hardware.mk
+include $(UART16550_DIR)/hardware/hardware.mk
 
 ifeq ($(VCD),1)
 DEFINE+=$(defmacro)VCD
 endif
 
-VSRC+=$(UART_HW_DIR)/simulation/testbench/uart_tb.v
+VSRC+=$(UART16550_HW_DIR)/simulation/testbench/uart_tb.v
 
 #icarus verilog simulator
 VLOG:=iverilog -W all -g2005-sv
@@ -36,7 +36,7 @@ test1: clean
 	make run VCD=0 TEST_LOG=">> test.log"
 
 debug:
-	@echo $(UART_DIR)
+	@echo $(UART16550_DIR)
 	@echo $(MODULES)
 	@echo $(SUBMODULES_DIR)
 	@echo $(MKREGS)

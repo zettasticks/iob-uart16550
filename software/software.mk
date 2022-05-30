@@ -1,15 +1,12 @@
-include $(UART_DIR)/config.mk
+include $(UART16550_DIR)/config.mk
 
-UART_SW_DIR:=$(UART_DIR)/software
+UART16550_SW_DIR:=$(UART16550_DIR)/software
 
 #include
-INCLUDE+=-I$(UART_SW_DIR)
+INCLUDE+=-I$(UART16550_SW_DIR)
 
 #headers
-HDR+=$(UART_SW_DIR)/*.h iob_uart_swreg.h
+HDR+=$(UART16550_SW_DIR)/*.h
 
 #sources
-SRC+=$(UART_SW_DIR)/iob-uart.c
-
-iob_uart_swreg.h: 
-	$(MKREGS) iob_uart $(UART_DIR) SW 
+SRC+=$(UART16550_SW_DIR)/iob-uart.c

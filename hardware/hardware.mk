@@ -1,30 +1,30 @@
-ifeq ($(filter UART, $(HW_MODULES)),)
+ifeq ($(filter UART16550, $(HW_MODULES)),)
 
-include $(UART_DIR)/config.mk
+include $(UART16550_DIR)/config.mk
 
 #add itself to HW_MODULES list
-HW_MODULES+=UART
+HW_MODULES+=UART16550
 
 
-UART_INC_DIR:=$(UART_HW_DIR)/include
-UART_SRC_DIR:=$(UART_HW_DIR)/src
+UART16550_INC_DIR:=$(UART16550_HW_DIR)/include
+UART16550_SRC_DIR:=$(UART16550_HW_DIR)/src
 
 USE_NETLIST ?=0
 
 #include files
-VHDR+=$(wildcard $(UART_INC_DIR)/*.vh)
-VHDR+=iob_uart_swreg_gen.vh iob_uart_swreg_def.vh
+VHDR+=$(wildcard $(UART16550_INC_DIR)/*.vh)
+VHDR+=iob_uart16550_swreg_gen.vh iob_uart16550_swreg_def.vh
 VHDR+=$(LIB_DIR)/hardware/include/iob_lib.vh
 
 #hardware include dirs
-INCLUDE+=$(incdir). $(incdir)$(UART_INC_DIR) $(incdir)$(LIB_DIR)/hardware/include
+INCLUDE+=$(incdir). $(incdir)$(UART16550_INC_DIR) $(incdir)$(LIB_DIR)/hardware/include
 
 #sources
-VSRC+=$(UART_SRC_DIR)/*.v $(UART_SRC_DIR)/iob_uart.v
+VSRC+=$(UART16550_SRC_DIR)/*.v $(UART16550_SRC_DIR)/iob_uart16550.v
 
-uart-hw-clean: uart-gen-clean
+uart16550-hw-clean: uart16550-gen-clean
 	@rm -f *.v *.vh
 
-.PHONY: uart-hw-clean
+.PHONY: uart16550-hw-clean
 
 endif

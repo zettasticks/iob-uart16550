@@ -1,4 +1,4 @@
-UART_DIR:=.
+UART16550_DIR:=.
 include config.mk
 
 #
@@ -87,9 +87,9 @@ test-clean: test-sim-clean test-fpga-clean test-doc-clean
 
 #
 # CLEAN ALL
-# 
+#
 
-clean-all: uart-gen-clean sim-clean fpga-clean-all doc-clean-all
+clean-all: uart16550-gen-clean sim-clean fpga-clean-all doc-clean-all
 
 
 debug:
@@ -106,5 +106,3 @@ debug:
 	test-doc test-doc-clean \
 	test test-clean \
 	clean-all debug
-
-
