@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-`include "iob_lib.vh"
 
 `include "uart_defines.v"
 
@@ -8,21 +7,24 @@ module iob_uart16550
      parameter DATA_W = 32, //PARAM & 32 & 64 & CPU data width
      parameter ADDR_W = 32 //CPU address section width
      )
-
   (
-
    //CPU interface
-`include "iob_s_if.vh"
+   input                 valid, //Native CPU interface valid signal
+   input [`ADDR_W-1:0] address, //Native CPU interface address signal
+   input [`DATA_W-1:0]   wdata, //Native CPU interface data write signal
+   input [`DATA_W/8-1:0] wstrb, //Native CPU interface write strobe signal
+   output [`DATA_W-1:0]  rdata, //Native CPU interface read data signal
+   output                ready, //Native CPU interface ready signal
 
-   //additional inputs and outputs
+   //IO rs232
+   output txd, //Serial transmit line
+   input  rxd, //Serial receive line
+   input  cts, //Clear to send; the destination is ready to receive a transmission sent by the UART
+   output rts, //Ready to send; the UART is ready to receive a transmission from the sender.
+   //output interrupt, //to be done
 
-   //START_IO_TABLE rs232
-   //`IOB_OUTPUT(interrupt, 1), //to be done
-   `IOB_OUTPUT(txd, 1), //Serial transmit line
-   `IOB_INPUT(rxd, 1), //Serial receive line
-   `IOB_INPUT(cts, 1), //Clear to send; the destination is ready to receive a transmission sent by the UART
-   `IOB_OUTPUT(rts, 1), //Ready to send; the UART is ready to receive a transmission from the sender.
-`include "gen_if.vh"
+   input  clk,
+   input  rst
    );
 
    wire [`UART_ADDR_WIDTH-1:0] wb_addr_in;
@@ -58,7 +60,7 @@ module iob_uart16550
       .wb_cyc_i(wb_valid_in),
       .wb_sel_i(wb_select_in),
       .wb_ack_o(wb_ready_out),
-      .int_o(),
+      .int_o(/*interrupt*/),
 
       // UART	signals
       .srx_pad_i(rxd),
