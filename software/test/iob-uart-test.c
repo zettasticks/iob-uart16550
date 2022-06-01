@@ -6,7 +6,7 @@
 
 int main()
 {
-  uart_init(UART_BASE,FREQ/BAUD);
+  uart_init(UART16550_BASE,FREQ/(16*BAUD));
   /*
   //test hex
   uart_puts("\ntest hex\n");
@@ -14,7 +14,7 @@ int main()
   printf("%x\n", 245);
   printf("%x\n", (uint32_t)(~0));
 
-  //test unsigned 
+  //test unsigned
   uart_puts("\ntest unsigned\n");
   printf("%u\n", 0);
   printf("%u\n", 245);
@@ -28,8 +28,8 @@ int main()
   printf("%d\n", (int32_t)(~0));
   printf("%d\n", (int32_t)(1<<31));
   printf("%d\n", (int32_t)(~(1<<31)));
- 
-  
+
+
   //test unsigned long long
   uart_puts("\ntest unsigned long long\n");
 
@@ -38,7 +38,7 @@ int main()
   printf("%llu\n\n", (uint64_t)1<<30);
   printf("%llu\n\n", (uint64_t)1<<31);
   printf("%llu\n\n", (uint64_t)1<<32);
-  printf("%llu\n\n", (uint64_t)1<<33); 
+  printf("%llu\n\n", (uint64_t)1<<33);
 
   //test left shift
   int i;
@@ -51,19 +51,19 @@ int main()
 
   printf("2**64-1 = %llu\n", ~0LL);
 
- 
+
   //test signed long long
   uart_puts("test signed long long\n\n");
   printf("%lld\n\n", 0LL);
   printf("%lld\n\n", 1LL<<29);
-  printf("%lld\n\n", 1LL<<30);  
+  printf("%lld\n\n", 1LL<<30);
   printf("%lld\n\n", 1LL<<31);
   printf("%lld\n\n", 1LL<<32);
   printf("%lld\n\n", 1LL<<33);
 
   printf("%lld\n\n", ~0LL);
   printf("%lld\n\n", -(1LL<<29));
-  printf("%lld\n\n", -(1LL<<30));  
+  printf("%lld\n\n", -(1LL<<30));
   printf("%lld\n\n", -(1LL<<31));
   printf("%lld\n\n", -(1LL<<32));
   printf("%lld\n\n", -(1LL<<33));
