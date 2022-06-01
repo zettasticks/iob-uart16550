@@ -2,8 +2,6 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include "iob_uart_swreg.h"
-
 #define UART_PROGNAME "IOb-UART"
 
 //UART commands
@@ -15,6 +13,7 @@
 #define FTX 7 //transmit file
 #define FRX 8 //receive file
 
+static int base;
 
 //UART functions
 
