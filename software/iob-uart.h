@@ -24,12 +24,17 @@ void uart_init(int base_address, uint16_t div);
 void uart_finish();
 
 //TX FUNCTIONS
-
-//Enable / disable tx
-void uart_txen(uint8_t val);
-
+//Check if tx is ready
+char uart_txready();
 //Wait for tx to be ready
 void uart_txwait();
+
+//RX FUNCTIONS
+//Check if rx is ready
+char uart_rxready();
+//Wait for rx to be ready
+void uart_rxwait();
+
 
 //Print char
 void uart_putc(char c);
@@ -39,11 +44,6 @@ void uart_puts(const char *s);
 
 //Send file
 void uart_sendfile(char* file_name, int file_size, char *mem);
-
-//RX FUNCTIONS
-
-//Wait for rx to be ready
-void uart_rxwait();
 
 //Get char
 char uart_getc();

@@ -3,11 +3,13 @@
 
 //TX FUNCTIONS
 void uart_txwait() {
+    while(!uart_txready());
+}
+
+char uart_txready() {
     uint8_t status = 0;
     status = *((volatile uint8_t *)(base + 5));
-    while(!(status & (1<<6))){
-      status = *((volatile uint8_t *)(base + 5));
-    }
+    return (status & (1<<6));
 }
 
 void uart_putc(char c) {
@@ -17,16 +19,18 @@ void uart_putc(char c) {
 
 //RX FUNCTIONS
 void uart_rxwait() {
+    while(!uart_rxready());
+}
+
+char uart_rxready() {
     uint8_t status = 0;
     status = *((volatile uint8_t *)(base + 5));
-    while(!(status & (1))){
-      status = *((volatile uint8_t *)(base + 5));
-    }
+    return (status & (1));
 }
 
 char uart_getc() {
-    uart_rxwait();
     uint8_t rvalue;
+    uart_rxwait();
     rvalue = *((volatile uint8_t *)(base));
     return rvalue;
 }
