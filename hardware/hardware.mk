@@ -17,7 +17,7 @@ VHDR+=iob_uart16550_swreg_gen.vh iob_uart16550_swreg_def.vh
 VHDR+=$(LIB_DIR)/hardware/include/iob_lib.vh
 
 #hardware include dirs
-INCLUDE+=$(incdir). $(incdir)$(UART16550_SRC_DIR) $(incdir)$(UART16550_INC_DIR) $(incdir)$(LIB_DIR)/hardware/include
+INCLUDE+=$(incdir). $(incdir)$(UART16550_INC_DIR) $(incdir)$(LIB_DIR)/hardware/include
 
 #sources
 VSRC+=$(UART16550_SRC_DIR)/*.v
