@@ -21,7 +21,7 @@ module iob_uart16550
    input  rxd, //Serial receive line
    input  cts, //Clear to send; the destination is ready to receive a transmission sent by the UART
    output rts, //Ready to send; the UART is ready to receive a transmission from the sender.
-   //output interrupt, //to be done
+   output interrupt,
 
    input  clk,
    input  rst
@@ -60,7 +60,7 @@ module iob_uart16550
       .wb_cyc_i(wb_valid_in),
       .wb_sel_i(wb_select_in),
       .wb_ack_o(wb_ready_out),
-      .int_o(/*interrupt*/),
+      .int_o(interrupt),
 
       // UART	signals
       .srx_pad_i(rxd),

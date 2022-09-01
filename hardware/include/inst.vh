@@ -1,11 +1,14 @@
 //instantiate core in system
 
-   //
-   // UART
-   //
+  //
+  // UART
+  //
+  wire uartInterrupt;
 
-   iob_uart16550 uart
-     (
+  iob_uart16550 #(
+      .DATA_W(32), //PARAM & 32 & 64 & CPU data width
+      .ADDR_W(32) //CPU address section width
+    ) uart (
       //RS232 interface
       .txd       (uart_txd),
       .rxd       (uart_rxd),
@@ -20,5 +23,7 @@
       .wdata(slaves_req[`wdata(`UART16550)]),
       .wstrb(slaves_req[`wstrb(`UART16550)]),
       .rdata(slaves_resp[`rdata(`UART16550)]),
-      .ready(slaves_resp[`ready(`UART16550)])
+      .ready(slaves_resp[`ready(`UART16550)]),
+
+      .interrupt(uartInterrupt)
       );
