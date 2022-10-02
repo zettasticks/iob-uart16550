@@ -1,6 +1,6 @@
 //add core test module in testbench
 
-   iob_uart16550 uart16550_tb
+   iob_uart uart_tb
      (
       .clk       (clk),
       .rst       (rst),
