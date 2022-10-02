@@ -47,7 +47,7 @@ module iob_uart16550
    assign wb_select_in = 1<<address[1:0];
    assign ready = wb_ready_out;
 
-   uart_top uart0
+   uart_top uart16550
      (
       .wb_clk_i(clk),
       // WISHBONE interface

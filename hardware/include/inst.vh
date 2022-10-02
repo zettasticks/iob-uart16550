@@ -1,14 +1,14 @@
 //instantiate core in system
 
   //
-  // UART
+  // UART16550
   //
   wire uartInterrupt;
 
   iob_uart16550 #(
       .DATA_W(32), //PARAM & 32 & 64 & CPU data width
       .ADDR_W(32) //CPU address section width
-    ) uart (
+    ) uart16550 (
       //RS232 interface
       .txd       (uart_txd),
       .rxd       (uart_rxd),
