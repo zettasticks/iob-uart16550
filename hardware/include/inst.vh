@@ -17,7 +17,7 @@
 
       //CPU interface
       .clk       (clk),
-      .rst       (reset),
+      .rst       (cpu_reset),
       .valid(slaves_req[`valid(`UART16550)]),
       .address(slaves_req[`address(`UART16550,32)]),
       .wdata(slaves_req[`wdata(`UART16550)]),

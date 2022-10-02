@@ -3,7 +3,7 @@
    iob_uart uart_tb
      (
       .clk       (clk),
-      .rst       (reset),
+      .rst       (rst),
 
       .valid     (uart_valid),
       .address   (uart_addr),
