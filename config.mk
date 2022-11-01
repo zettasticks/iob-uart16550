@@ -31,10 +31,6 @@ VERSION ?=V0.1
 $(TOP_MODULE)_version.txt:
 	echo $(VERSION) > version.txt
 
-#cpu accessible registers
-iob_uart16550_swreg_def.vh iob_uart16550_swreg_gen.vh: $(UART16550_DIR)/mkregs.conf
-	$(MKREGS) iob_uart16550 $(UART16550_DIR) HW
-
 uart16550-gen-clean:
 	@rm -rf *# *~ version.txt
 
