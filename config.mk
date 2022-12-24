@@ -1,4 +1,4 @@
-SHELL:=/bin/bash
+SHELL:=bash
 
 TOP_MODULE=iob_uart16550
 
