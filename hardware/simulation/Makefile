@@ -9,7 +9,9 @@ ifeq ($(VCD),1)
 DEFINE+=$(defmacro)VCD
 endif
 
-VSRC+=$(UART16550_HW_DIR)/simulation/testbench/uart_tb.v
+VSRC+=$(UART16550_HW_DIR)/simulation/testbench/uart_tb.v $(UART16550_HW_DIR)/simulation/testbench/wb_mast.v
+
+VSRC := $(subst iob_uart16550.v,, $(VSRC))
 
 #icarus verilog simulator
 VLOG:=iverilog -W all -g2005-sv
@@ -38,15 +40,13 @@ test1: clean
 debug:
 	@echo $(UART16550_DIR)
 	@echo $(MODULES)
-	@echo $(SUBMODULES_DIR)
-	@echo $(MKREGS)
 	@echo $(VSRC)
 
 #clean test log only when tests begin
 clean-testlog:
 	@rm -f test.log
 
-clean: uart-hw-clean
+clean: uart16550-hw-clean
 	@rm -f a.out *.vcd
 
 clean-all: clean-testlog clean
