@@ -95,9 +95,16 @@ always @(pad_stx_o) begin
   srx1_ir = pad_stx_o;  
 end
 
+`ifdef VCD
 initial begin
-  clkr = 0;
-  #50000 $finish;
+    $dumpfile("uut.vcd");
+    $dumpvars;
+end
+`endif
+
+initial begin
+    clkr = 0;
+    #50000 $finish;
 end
 
 initial begin
@@ -105,7 +112,7 @@ initial begin
 end
 
 always begin
-  #5 clkr = ~clk;
+    #5 clkr = ~clk;
 end
 
 wire [31:0] aux_wb_adr_i;
