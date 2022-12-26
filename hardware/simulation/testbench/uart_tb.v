@@ -1,159 +1,204 @@
 `timescale 1ns/1ps
 
-//ASCII codes used
-`define STX 2 //start of text 
-`define ETX 3 //end of text
-`define EOT 4 //end of transission
-`define ENQ 5 //enquiry
-`define ACK 6 //acklowledge
-`define FTX 7 //transmit file
-`define FRX 8 //receive file
+module uart_test;
 
-module uart_tb;
+`include "uart_defines.v"
 
-   parameter clk_frequency = 100e6; //100 MHz
-   parameter baud_rate = 1e6; //high value to speed sim
-   parameter clk_per = 1e9/clk_frequency;
-   
-   //iterator
-   integer               i;
+reg                         clkr;
+reg                         wb_rst_ir;
+wire [`UART_ADDR_WIDTH-1:0] wb_adr_i;
+wire [31:0]                 wb_dat_i;
+wire [31:0]                 wb_dat_o;
+wire                        wb_we_i;
+wire                        wb_stb_i;
+wire                        wb_cyc_i;
+wire                        wb_ack_o;
+wire [3:0]                  wb_sel_i;
+wire                        int_o;
+wire                        pad_stx_o;
+wire                        rts_o;
+wire                        dtr_o;
+reg                         pad_srx_ir;
 
-   // CORE SIGNALS
-   reg 			rst;
-   reg 			clk;
-   
-   //control interface (backend)
-   reg                  rst_soft;
-   reg                  wr_en;
-   reg                  rd_en;   
-   reg [`UART_DIV_W-1:0] div;
-   
-   reg                   tx_en;
-   reg [7:0]             tx_data;
-   wire                  tx_ready;
-   
-   reg                   rx_en;
-   wire [7:0]            rx_data;
-   reg [7:0]             rcvd_data;
-   wire                  rx_ready;
-   
-   //rs232 interface (frontend)
-   wire                  rts2cts;
-   wire                  tx2rx;
-   
+// All the signals and regs named with a 1 are receiver fifo signals
+wire [`UART_ADDR_WIDTH-1:0] wb1_adr_i;
+wire [31:0]                 wb1_dat_i;
+wire [31:0]                 wb1_dat_o;
+wire                        wb1_we_i;
+wire                        wb1_stb_i;
+wire                        wb1_cyc_i;
+wire                        wb1_ack_o;
+wire [3:0]                  wb1_sel_i;
+wire                        int1_o;
+wire                        stx1_o;
+wire                        rts1_o;
+wire                        dtr1_o;
+reg                         srx1_ir;
 
-   initial begin
+wire clk = clkr;
+wire wb_rst_i = wb_rst_ir;
+wire pad_srx_i = pad_srx_ir;
+wire cts_i = 1; //cts_ir;
+wire dsr_i = 1; //dsr_ir;
+wire ri_i = 1; //ri_ir;
+wire dcd_i = 1; //dcd_ir;
+
+wire srx1_i = srx1_ir;
+wire cts1_i = 1; //cts1_ir;
+wire dsr1_i = 1; //dsr1_ir;
+wire ri1_i = 1; //ri1_ir;
+wire dcd1_i = 1; //dcd1_ir;
+
+reg [31:0] dat_o;
+
+integer e;
+
+uart_top uart_snd(
+    clk,
+    
+    // Wishbone signals
+    wb_rst_i, wb_adr_i, wb_dat_i, wb_dat_o, wb_we_i, wb_stb_i, wb_cyc_i, wb_ack_o,  wb_sel_i,
+    int_o, // interrupt request
+    
+    // UART signals
+    // serial input/output
+    pad_stx_o, pad_srx_i,
+    
+    // modem signals
+    rts_o, cts_i, dtr_o, dsr_i, ri_i, dcd_i
+`ifdef UART_HAS_BAUDRATE_OUTPUT
+    , baud1_o
+`endif
+);
+
+uart_top  uart_rcv(
+  clk, 
+  
+  // Wishbone signals
+  wb_rst_i, wb1_adr_i, wb1_dat_i, wb1_dat_o, wb1_we_i, wb1_stb_i, wb1_cyc_i, wb1_ack_o, wb1_sel_i,  
+  int1_o, // interrupt request
+
+  // UART signals
+  // serial input/output
+  stx1_o, srx1_i,
+
+  // modem signals
+  rts1_o, cts1_i, dtr1_o, dsr1_i, ri1_i, dcd1_i
+`ifdef UART_HAS_BAUDRATE_OUTPUT
+  , baud2_o
+`endif
+
+  );
+
+/////////// CONNECT THE UARTS
+always @(pad_stx_o) begin
+  srx1_ir = pad_stx_o;  
+end
 
 `ifdef VCD
-      $dumpfile("uut.vcd");
-      $dumpvars;
+initial begin
+    $dumpfile("uut.vcd");
+    $dumpvars;
+end
 `endif
-      
-      clk = 1;
-      rst = 1;
-      rst_soft =0;
 
-      rd_en = 0;
-      wr_en = 0;
+initial begin
+    clkr = 0;
+    #50000 $finish;
+end
 
-      tx_en = 0;
-      rx_en = 0;
+initial begin
+    $display("Data bus is %0d-bit. UART uses %0d-bit addr.", `UART_DATA_WIDTH, `UART_ADDR_WIDTH);
+end
 
-      div = clk_frequency / baud_rate;
-      
-      // deassert hard reset
-      #100 @(posedge clk) #1 rst = 0;
-      #100 @(posedge clk);
+always begin
+    #5 clkr = ~clk;
+end
 
-      // assert tx not ready
-      if (tx_ready) begin
-         $display("ERROR: TX is ready initially");
-         $finish;
-      end
-      
-      // assert rx not ready
-      if(rx_ready) begin
-         $display("ERROR: RX is ready initially");
-         $finish;
-      end
-   
-      //pulse soft reset
-      #1 rst_soft = 1;
-      @(posedge clk) #1 rst_soft = 0;
-      
+wire [31:0] aux_wb_adr_i;
+assign wb_adr_i = aux_wb_adr_i[4:0];
+wb_mast wbm(// Outputs
+        .adr  (aux_wb_adr_i),
+        .dout (wb_dat_i),
+        .cyc  (wb_cyc_i),
+        .stb  (wb_stb_i),
+        .sel  (wb_sel_i),
+        .we   (wb_we_i),
+        // Inputs
+        .clk  (clk),
+        .rst  (wb_rst_i),
+        .din  (wb_dat_o),
+        .ack  (wb_ack_o),
+        .err  (1'b0),
+        .rty  (1'b0));
 
-      //enable rx
-      @(posedge clk) #1 rx_en = 1;
+wire [31:0] aux_wb1_adr_i;
+assign wb1_adr_i = aux_wb1_adr_i[4:0];
+wb_mast wbm1(// Outputs
+         .adr (aux_wb1_adr_i),
+         .dout(wb1_dat_i),
+         .cyc (wb1_cyc_i),
+         .stb (wb1_stb_i),
+         .sel (wb1_sel_i),
+         .we  (wb1_we_i),
+         // Inputs
+         .clk (clk),
+         .rst (wb_rst_i),
+         .din (wb1_dat_o),
+         .ack (wb1_ack_o),
+         .err (1'b0),
+         .rty (1'b0));
 
-      //enable tx
-      #20000;
-      @(posedge clk) #1 tx_en = 1;
-      
+// The test sequence
+initial
+begin
+  #1 wb_rst_ir = 1;
+  #10 wb_rst_ir = 0;
+    
+  //write to lcr. set bit 7
+  //wb_cyc_ir = 1;
+  wbm.wb_wr1(`UART_REG_LC, 4'b1000, {8'b10011011, 24'b0});
+  // set dl to divide by 3
+  wbm.wb_wr1(`UART_REG_DL1,4'b0001, 32'd2);
+  @(posedge clk);
+  @(posedge clk);
+  // restore normal registers
+  wbm.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0}); //00011011 
 
-      // write data to send
-      for(i=0; i < 256; i= i+1) begin
+  fork begin
+    $display("%m : %t : sending : %h", $time, 8'b10000001);
+    wbm.wb_wr1(0, 4'b1, 32'b10000001);
+    @(posedge clk);
+    @(posedge clk);
+    $display("%m : %t : sending : %h", $time, 8'b01000010);
+    wbm.wb_wr1(0, 4'b1, 32'b01000010);
+    wait (uart_snd.regs.tstate==0 && uart_snd.regs.transmitter.tf_count==0);
+  end
+  join
+end
 
-         //wait for tx ready 
-         do @(posedge clk); while(!tx_ready);
-         
-         //write word to send
-         @(posedge clk) #1 wr_en = 1; tx_data = i;
-         @(posedge clk) #1 wr_en = 0;
-         
-         //wait for core to receive datarx ready 
-         do  @(posedge clk); while(!rx_ready);
-
-         //read received word
-         @(posedge clk) #1 rd_en = 1; rcvd_data = rx_data;
-         @(posedge clk) #1 rd_en = 0;
-         
-         
-         // check received data
-	 if ( rcvd_data != i ) begin
-	    $display("got %x, expected %x", rcvd_data, i);
-            $display("Test failed");
-	    $finish;
-	 end
-
-         @(posedge clk);
-         @(posedge clk);
-         @(posedge clk);
-
-      end // for (i=0; i < 256; i= i+1)
-
-      $display("Test PASSED");
-      $finish;
-
-   end 
-
-   //
-   // CLOCK
-   //
-
-   //system clock
-   always #(clk_per/2) clk = ~clk;
-
-
-  // Instantiate the Unit Under Test (UUT)
-   uart_core uut
-     (
-      .clk(clk),
-      .rst(rst),
-      .rst_soft(rst_soft),
-      .tx_en(tx_en),
-      .rx_en(rx_en),
-      .tx_ready(tx_ready),
-      .rx_ready(rx_ready),
-      .tx_data(tx_data),
-      .rx_data(rx_data),
-      .data_write_en(wr_en),
-      .data_read_en(rd_en),
-      .bit_duration(div),
-      .rxd(tx2rx),
-      .txd(tx2rx),
-      .cts(rts2cts),
-      .rts(rts2cts)
-      );
+// receiver side
+initial
+begin
+  #11;
+  //write to lcr. set bit 7
+  //wb_cyc_ir = 1;
+  wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b10011011, 24'b0});
+  // set dl to divide by 3
+  wbm1.wb_wr1(`UART_REG_DL1, 4'b1, 32'd2);
+  @(posedge clk);
+  @(posedge clk);
+  // restore normal registers
+  wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0});
+  wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
+  wait(uart_rcv.regs.receiver.rf_count == 2);
+  wbm1.wb_rd1(0, 4'b1, dat_o);
+  $display("%m : %t : Data out: %h", $time, dat_o);
+  @(posedge clk);
+  wbm1.wb_rd1(0, 4'b1, dat_o);
+  $display("%m : %t : Data out: %h", $time, dat_o);
+  $display("%m : Finish");
+  $finish;
+end
 
 endmodule
-
