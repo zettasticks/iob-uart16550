@@ -161,7 +161,7 @@ initial
 	rd_cnt = 0;
 	wr_cnt = 0;
 	#1;
-	$display("\nINFO: WISHBONE MASTER MODEL INSTANTIATED (%m)\n");
+	$display("INFO: WISHBONE MASTER MODEL INSTANTIATED (%m)");
    end
 
 

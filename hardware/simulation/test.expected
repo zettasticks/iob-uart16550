@@ -1,18 +1,8 @@
 (uart_test.uart_snd) UART INFO: Data bus width is 32. Debug Interface present.
-
-(uart_test.uart_snd) UART INFO: Doesn't have baudrate output
-
 (uart_test.uart_rcv) UART INFO: Data bus width is 32. Debug Interface present.
-
-(uart_test.uart_rcv) UART INFO: Doesn't have baudrate output
-
 Data bus is 32-bit. UART uses 5-bit addr.
-
 INFO: WISHBONE MASTER MODEL INSTANTIATED (uart_test.wbm)
-
-
 INFO: WISHBONE MASTER MODEL INSTANTIATED (uart_test.wbm1)
-
 INT_O low (2)
 uart_test :               146000 : sending : 81
 INT_O high (196)
