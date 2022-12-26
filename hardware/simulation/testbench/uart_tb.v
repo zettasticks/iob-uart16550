@@ -20,6 +20,21 @@ wire                        rts_o;
 wire                        dtr_o;
 reg                         pad_srx_ir;
 
+// All the signals and regs named with a 1 are receiver fifo signals
+wire [`UART_ADDR_WIDTH-1:0] wb1_adr_i;
+wire [31:0]                 wb1_dat_i;
+wire [31:0]                 wb1_dat_o;
+wire                        wb1_we_i;
+wire                        wb1_stb_i;
+wire                        wb1_cyc_i;
+wire                        wb1_ack_o;
+wire [3:0]                  wb1_sel_i;
+wire                        int1_o;
+wire                        stx1_o;
+wire                        rts1_o;
+wire                        dtr1_o;
+reg                         srx1_ir;
+
 wire clk = clkr;
 wire wb_rst_i = wb_rst_ir;
 wire pad_srx_i = pad_srx_ir;
@@ -56,23 +71,6 @@ uart_top uart_snd(
 `endif
 );
 
-
-// All the signals and regs named with a 1 are receiver fifo signals
-
-wire [`UART_ADDR_WIDTH-1:0] wb1_adr_i;
-wire [31:0]                 wb1_dat_i;
-wire [31:0]                 wb1_dat_o;
-wire                        wb1_we_i;
-wire                        wb1_stb_i;
-wire                        wb1_cyc_i;
-wire                        wb1_ack_o;
-wire [3:0]                  wb1_sel_i;
-wire                        int1_o;
-wire                        stx1_o;
-wire                        rts1_o;
-wire                        dtr1_o;
-reg                         srx1_ir;
-
 uart_top  uart_rcv(
   clk, 
   
@@ -93,15 +91,21 @@ uart_top  uart_rcv(
   );
 
 /////////// CONNECT THE UARTS
-always @(pad_stx_o)
-begin
+always @(pad_stx_o) begin
   srx1_ir = pad_stx_o;  
 end
 
-initial
-begin
+initial begin
   clkr = 0;
   #50000 $finish;
+end
+
+initial begin
+    $display("Data bus is %0d-bit. UART uses %0d-bit addr.", `UART_DATA_WIDTH, `UART_ADDR_WIDTH);
+end
+
+always begin
+  #5 clkr = ~clk;
 end
 
 wire [31:0] aux_wb_adr_i;
@@ -154,62 +158,16 @@ begin
   // restore normal registers
   wbm.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0}); //00011011 
 
-  fork
-  begin
+  fork begin
     $display("%m : %t : sending : %h", $time, 8'b10000001);
     wbm.wb_wr1(0, 4'b1, 32'b10000001);
     @(posedge clk);
     @(posedge clk);
     $display("%m : %t : sending : %h", $time, 8'b01000010);
     wbm.wb_wr1(0, 4'b1, 32'b01000010);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b11000011);
-    wbm.wb_wr1(0, 4'b1, 32'b11000011);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b00100100);
-    wbm.wb_wr1(0, 4'b1, 32'b00100100);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b10100101);
-    wbm.wb_wr1(0, 4'b1, 32'b10100101);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b01100110);
-    wbm.wb_wr1(0, 4'b1, 32'b01100110);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b11100111);
-    wbm.wb_wr1(0, 4'b1, 32'b11100111);
-    @(posedge clk);
-    @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b00011000);
-    wbm.wb_wr1(0, 4'b1, 32'b00011000);
     wait (uart_snd.regs.tstate==0 && uart_snd.regs.transmitter.tf_count==0);
-//    disable check;
   end
-//  begin: check
-//  end
   join
-end
-
-always @(int1_o)
-  if (int1_o)
-    $display("INT_O high (%g)", $time);
-  else
-    $display("INT_O low (%g)", $time);
-    
-always @(int1_o)
-begin
-  if (int1_o) begin
-    wbm1.wb_rd1(2,4'b0100, dat_o);
-    $display("IIR : %h", dat_o);
-    wbm1.wb_rd1(5,4'b0010, dat_o);
-    $display("LSR : %h", dat_o);
-    wbm1.wb_rd1(0, 4'b1, dat_o);
-    $display("%m : %t : Data out: %h", $time, dat_o);
-  end
 end
 
 // receiver side
@@ -227,45 +185,13 @@ begin
   wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0});
   wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
   wait(uart_rcv.regs.receiver.rf_count == 2);
-    e = 800;
-  while (e > 0)
-  begin
-    @(posedge clk)
-    if (uart_rcv.regs.enable) e = e - 1;
-  end
   wbm1.wb_rd1(0, 4'b1, dat_o);
   $display("%m : %t : Data out: %h", $time, dat_o);
   @(posedge clk);
   wbm1.wb_rd1(0, 4'b1, dat_o);
   $display("%m : %t : Data out: %h", $time, dat_o);
   $display("%m : Finish");
-  e = 800;
-  while (e > 0)
-  begin
-    @(posedge clk)
-    if (uart_rcv.regs.enable) e = e - 1;
-  end
-  e = 800;
-  while (e > 0)
-  begin
-    @(posedge clk)
-    if (uart_rcv.regs.enable) e = e - 1;
-  end
   $finish;
-end
-
-//always @(uart_rcv.regs.rstate)
-//begin
-//  $display($time,": Receiver state changed to: ", uart_rcv.regs.rstate);
-//end
-
-initial begin
-    $display("Data bus is %0d-bit. UART uses %0d-bit addr.", `UART_DATA_WIDTH, `UART_ADDR_WIDTH);
-end
-
-
-always begin
-  #5 clkr = ~clk;
 end
 
 endmodule

@@ -3,25 +3,8 @@
 Data bus is 32-bit. UART uses 5-bit addr.
 INFO: WISHBONE MASTER MODEL INSTANTIATED (uart_test.wbm)
 INFO: WISHBONE MASTER MODEL INSTANTIATED (uart_test.wbm1)
-INT_O low (2)
 uart_test :               146000 : sending : 81
-INT_O high (196)
 uart_test :               205000 : sending : 42
-IIR : 00c20000
-INT_O low (236)
-uart_test :               265000 : sending : c3
-LSR : 00006000
-uart_test :               316000 : Data out: 000000xx
-uart_test :               325000 : sending : 24
-uart_test :               385000 : sending : a5
-uart_test :               445000 : sending : 66
-uart_test :               505000 : sending : e7
-uart_test :               565000 : sending : 18
-uart_test :             23196000 : Data out: 00000081
-uart_test :             23246000 : Data out: 00000042
+uart_test :              7206000 : Data out: 00000081
+uart_test :              7256000 : Data out: 00000042
 uart_test : Finish
-INT_O high (42356)
-IIR : 00cc0000
-LSR : 00006100
-INT_O low (42466)
-uart_test :             42476000 : Data out: 000000c3
