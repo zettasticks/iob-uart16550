@@ -1,5 +1,5 @@
 # SOURCES
-VTOP:=uart_tb
+VTOP:=uart_test
 
 #tests
 TEST_LIST+=test1
