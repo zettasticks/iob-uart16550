@@ -18,21 +18,23 @@ module iob_uart16550 #(
   wire wb_ready_in;
   wire [`UART_DATA_WIDTH/8-1:0] wb_strb_in;
   wire [`UART_DATA_WIDTH/8-1:0] wb_select_in;
-  wire wb_ready_out;
+  wire wb_ack_out;
 
   /** IOb-bus accesses */
-  reg iob_rvalid_reg;
-  assign iob_rvalid_o = iob_rvalid_reg;
-  //The core supports zero-wait state accesses on all transfers.
+  reg  [0:0] iob_avalid_reg;
   always @(posedge clk_i, posedge arst_i) begin
     if (arst_i) begin
-      iob_rvalid_reg <= 1'b0;
-    end else if (~wb_write_enable_in) begin
-      iob_rvalid_reg <= wb_ready_out;
+      iob_avalid_reg <= 1'b0;
+    end else if (iob_avalid_i) begin
+      iob_avalid_reg <= 1'b1;
+    end else if (wb_ack_out) begin
+      iob_avalid_reg <= 1'b0;
     end
   end 
   // Ready signal
-  assign iob_ready_o = 1'b1;
+  //assign iob_rvalid_o = wb_ack_out ? ~wb_write_enable_in : 1'b0;
+  assign iob_rvalid_o = wb_ack_out;
+  assign iob_ready_o = iob_avalid_reg ? wb_ack_out : 1'b1;
 
   // IOb to WishBone converter
   assign wb_addr_in = iob_addr_i[`UART_ADDR_WIDTH-1:0];
@@ -55,7 +57,7 @@ module iob_uart16550 #(
     .wb_stb_i(wb_ready_in),
     .wb_cyc_i(wb_valid_in),
     .wb_sel_i(wb_select_in),
-    .wb_ack_o(wb_ready_out),
+    .wb_ack_o(wb_ack_out),
     .int_o(interrupt),
 
 `ifdef UART_HAS_BAUDRATE_OUTPUT

@@ -60,8 +60,9 @@ wire clk_i = clk;
 wire cke_i = 1'b1;
 wire arst_i = wb_rst_i;
 
+reg  [0:0] iob_wr_reg;
 wire [0:0] iob_avalid = wb_cyc_i & wb_stb_i;
-wire [ADDR_W-1:0] iob_addr = wb_adr_i;
+wire [ADDR_W-1:0] iob_addr = aux_wb_adr_i;
 wire [DATA_W-1:0] iob_wdata = wb_dat_i;
 wire [DATA_W/8-1:0] iob_wstrb = wb_we_i & wb_sel_i;
 wire [0:0] iob_rvalid;
@@ -69,9 +70,19 @@ wire [DATA_W-1:0] iob_rdata;
 wire [0:0] iob_ready;
 assign wb_ack_o = iob_rvalid;
 assign wb_dat_o = iob_rdata;
+always @(posedge clk_i, posedge arst_i) begin
+  if (arst_i) begin
+    iob_wr_reg <= 1'b0;
+  end else if (wb_we_i) begin
+    iob_wr_reg <= iob_ready;
+  end else begin
+    iob_wr_reg <= 1'b0;
+  end
+end 
 
+reg  [0:0] iob_wr_reg_1;
 wire [0:0] iob_avalid_1 = wb1_cyc_i & wb1_stb_i;
-wire [ADDR_W-1:0] iob_addr_1 = wb1_adr_i;
+wire [ADDR_W-1:0] iob_addr_1 = aux_wb1_adr_i;
 wire [DATA_W-1:0] iob_wdata_1 = wb1_dat_i;
 wire [DATA_W/8-1:0] iob_wstrb_1 = wb1_we_i & wb1_sel_i;
 wire [0:0] iob_rvalid_1;
@@ -79,6 +90,15 @@ wire [DATA_W-1:0] iob_rdata_1;
 wire [0:0] iob_ready_1;
 assign wb1_ack_o = iob_rvalid_1;
 assign wb1_dat_o = iob_rdata_1;
+always @(posedge clk_i, posedge arst_i) begin
+  if (arst_i) begin
+    iob_wr_reg_1 <= 1'b0;
+  end else if (wb1_we_i) begin
+    iob_wr_reg_1 <= iob_ready_1;
+  end else begin
+    iob_wr_reg_1 <= 1'b0;
+  end
+end 
 
 iob_uart16550 #(
   .ADDR_W(ADDR_W),
@@ -129,7 +149,8 @@ end
 
 initial begin
     clkr = 0;
-    #50000 $finish;
+    #50000 $display("BOOM!");
+    $finish;
 end
 
 initial begin
@@ -216,8 +237,10 @@ begin
   // restore normal registers
   wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0});
   wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
+  $display("BOOM!");
   wait(uart_rcv.uart16550.regs.receiver.rf_count == 2);
   wbm1.wb_rd1(0, 4'b1, dat_o);
+  $display("BOOM!");
   $display("%m : %t : Data out: %h", $time, dat_o);
   @(posedge clk);
   wbm1.wb_rd1(0, 4'b1, dat_o);
