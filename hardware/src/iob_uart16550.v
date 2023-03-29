@@ -40,7 +40,7 @@ module iob_uart16550 #(
   assign iob_rdata_o = wb_data_out;
   assign wb_write_enable_in = |iob_wstrb_i;
   assign wb_valid_in = iob_avalid_i;
-  assign wb_ready_in = iob_avalid_i&(~ready);
+  assign wb_ready_in = iob_avalid_i&(~iob_rvalid_o);
   assign wb_strb_in = iob_wstrb_i;
   assign wb_select_in = 1<<iob_addr_i[1:0];
 
@@ -58,6 +58,9 @@ module iob_uart16550 #(
     .wb_ack_o(wb_ready_out),
     .int_o(interrupt),
 
+`ifdef UART_HAS_BAUDRATE_OUTPUT
+    .baud1_o(),
+`endif
     // UART	signals
     .srx_pad_i(rxd),
     .stx_pad_o(txd),
