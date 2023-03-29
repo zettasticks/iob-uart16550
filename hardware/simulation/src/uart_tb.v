@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module uart_test;
+module uart_tb;
 
 `include "uart_defines.v"
 
@@ -53,42 +53,67 @@ reg [31:0] dat_o;
 
 integer e;
 
-uart_top uart_snd(
-    clk,
-    
-    // Wishbone signals
-    wb_rst_i, wb_adr_i, wb_dat_i, wb_dat_o, wb_we_i, wb_stb_i, wb_cyc_i, wb_ack_o,  wb_sel_i,
-    int_o, // interrupt request
-    
-    // UART signals
-    // serial input/output
-    pad_stx_o, pad_srx_i,
-    
-    // modem signals
-    rts_o, cts_i, dtr_o, dsr_i, ri_i, dcd_i
-`ifdef UART_HAS_BAUDRATE_OUTPUT
-    , baud1_o
-`endif
+localparam ADDR_W = 32;
+localparam DATA_W = 32;
+
+wire clk_i = clk;
+wire cke_i = 1'b1;
+wire arst_i = wb_rst_i;
+
+wire [0:0] iob_avalid = wb_cyc_i & wb_stb_i;
+wire [ADDR_W-1:0] iob_addr = wb_adr_i;
+wire [DATA_W-1:0] iob_wdata = wb_dat_i;
+wire [DATA_W/8-1:0] iob_wstrb = wb_we_i & wb_sel_i;
+wire [0:0] iob_rvalid;
+wire [DATA_W-1:0] iob_rdata;
+wire [0:0] iob_ready;
+assign wb_ack_o = iob_rvalid;
+assign wb_dat_o = iob_rdata;
+
+wire [0:0] iob_avalid_1 = wb1_cyc_i & wb1_stb_i;
+wire [ADDR_W-1:0] iob_addr_1 = wb1_adr_i;
+wire [DATA_W-1:0] iob_wdata_1 = wb1_dat_i;
+wire [DATA_W/8-1:0] iob_wstrb_1 = wb1_we_i & wb1_sel_i;
+wire [0:0] iob_rvalid_1;
+wire [DATA_W-1:0] iob_rdata_1;
+wire [0:0] iob_ready_1;
+assign wb1_ack_o = iob_rvalid_1;
+assign wb1_dat_o = iob_rdata_1;
+
+iob_uart16550 #(
+  .ADDR_W(ADDR_W),
+  .DATA_W(DATA_W)
+) uart_snd(
+  `include "iob_s_portmap.vh"
+
+  .txd(pad_stx_o),
+  .rxd(pad_srx_i),
+  .cts(cts_i),
+  .rts(rts_o),
+  .interrupt(int_o),
+
+  `include "iob_clkenrst_portmap.vh"
 );
+iob_uart16550 #(
+  .ADDR_W(ADDR_W),
+  .DATA_W(DATA_W)
+) uart_rcv(
+  .iob_avalid_i(iob_avalid_1[0+:1]), //Request valid.
+  .iob_addr_i(iob_addr_1[0+:ADDR_W]), //Address.
+  .iob_wdata_i(iob_wdata_1[0+:DATA_W]), //Write data.
+  .iob_wstrb_i(iob_wstrb_1[0+:(DATA_W/8)]), //Write strobe.
+  .iob_rvalid_o(iob_rvalid_1[0+:1]), //Read data valid.
+  .iob_rdata_o(iob_rdata_1[0+:DATA_W]), //Read data.
+  .iob_ready_o(iob_ready_1[0+:1]), //Interface ready.
 
-uart_top  uart_rcv(
-  clk, 
-  
-  // Wishbone signals
-  wb_rst_i, wb1_adr_i, wb1_dat_i, wb1_dat_o, wb1_we_i, wb1_stb_i, wb1_cyc_i, wb1_ack_o, wb1_sel_i,  
-  int1_o, // interrupt request
+  .txd(stx1_o),
+  .rxd(srx1_i),
+  .cts(cts1_i),
+  .rts(rts1_o),
+  .interrupt(int1_o),
 
-  // UART signals
-  // serial input/output
-  stx1_o, srx1_i,
-
-  // modem signals
-  rts1_o, cts1_i, dtr1_o, dsr1_i, ri1_i, dcd1_i
-`ifdef UART_HAS_BAUDRATE_OUTPUT
-  , baud2_o
-`endif
-
-  );
+  `include "iob_clkenrst_portmap.vh"
+);
 
 /////////// CONNECT THE UARTS
 always @(pad_stx_o) begin
@@ -172,7 +197,7 @@ begin
     @(posedge clk);
     $display("%m : %t : sending : %h", $time, 8'b01000010);
     wbm.wb_wr1(0, 4'b1, 32'b01000010);
-    wait (uart_snd.regs.tstate==0 && uart_snd.regs.transmitter.tf_count==0);
+    wait (uart_snd.uart16550.regs.tstate==0 && uart_snd.uart16550.regs.transmitter.tf_count==0);
   end
   join
 end
@@ -191,7 +216,7 @@ begin
   // restore normal registers
   wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0});
   wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
-  wait(uart_rcv.regs.receiver.rf_count == 2);
+  wait(uart_rcv.uart16550.regs.receiver.rf_count == 2);
   wbm1.wb_rd1(0, 4'b1, dat_o);
   $display("%m : %t : Data out: %h", $time, dat_o);
   @(posedge clk);
