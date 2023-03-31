@@ -192,10 +192,8 @@ begin
   // restore normal registers
   wbm1.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0});
   wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
-  $display("BOOM!");
   wait(uart_rcv.regs.receiver.rf_count == 2);
   wbm1.wb_rd1(0, 4'b1, dat_o);
-  $display("BOOM!");
   $display("%m : %t : Data out: %h", $time, dat_o);
   @(posedge clk);
   wbm1.wb_rd1(0, 4'b1, dat_o);
