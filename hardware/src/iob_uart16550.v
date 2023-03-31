@@ -32,8 +32,8 @@ module iob_uart16550 #(
     end
   end 
   // Ready signal
-  //assign iob_rvalid_o = wb_ack_out ? ~wb_write_enable_in : 1'b0;
-  assign iob_rvalid_o = wb_ack_out;
+  assign iob_rvalid_o = wb_ack_out ? ~wb_write_enable_in : 1'b0;
+  //assign iob_rvalid_o = wb_ack_out; USED to pass the ack signal directly to the testbench.
   assign iob_ready_o = iob_avalid_reg ? wb_ack_out : 1'b1;
 
   // IOb to WishBone converter
