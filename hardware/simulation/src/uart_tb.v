@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module uart_test;
+module uart_tb;
 
 `include "uart_defines.v"
 
@@ -104,7 +104,8 @@ end
 
 initial begin
     clkr = 0;
-    #50000 $finish;
+    #50000 $display("BOOM!");
+    $finish;
 end
 
 initial begin
