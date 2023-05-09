@@ -31,5 +31,5 @@ jobs:
         with:
           submodules: 'recursive'
       - name: sim-test
-        run: make clean && make setup && make -C ../iob_uart16550_V0.10/ sim-test
+        run: nix-shell --run 'make clean && make setup && make -C ../iob_uart16550_V0.10/ sim-test'
         
