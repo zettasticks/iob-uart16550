@@ -30,8 +30,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
-      - name: test-clean
-        run: make test-clean
-      - name: test-sim
-        run: make test-sim
+      - name: sim-test
+        run: make clean && make setup && make -C ../iob_uart16550_V0.10/ sim-test
         
