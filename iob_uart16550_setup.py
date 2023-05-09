@@ -38,12 +38,14 @@ ios = \
         {'name':"arst_i", 'type':"I", 'n_bits':'1', 'descr':"System reset, asynchronous and active high"},
         {'name':"cke_i" , 'type':"I", 'n_bits':'1', 'descr':"System reset, asynchronous and active high"}
     ]},
-    {'name': 'rs232_io', 'descr':'UART16550 specific IO.', 'ports': [
+    {'name': 'rs232', 'descr':'UART16550 rs232 interface signals.', 'ports': [
         #{'name':'interrupt', 'type':'O', 'n_bits':'1', 'descr':'be done'},
-        {'name':'txd', 'type':'O', 'n_bits':'1', 'descr':'//Serial transmit line'},
-        {'name':'rxd', 'type':'I', 'n_bits':'1', 'descr':'//Serial receive line'},
-        {'name':'cts', 'type':'I', 'n_bits':'1', 'descr':'//Clear to send; the destination is ready to receive a transmission sent by the UART'},
-        {'name':'rts', 'type':'O', 'n_bits':'1', 'descr':'//Ready to send; the UART is ready to receive a transmission from the sender'},
+        {'name':'txd', 'type':'O', 'n_bits':'1', 'descr':'Serial transmit line'},
+        {'name':'rxd', 'type':'I', 'n_bits':'1', 'descr':'Serial receive line'},
+        {'name':'cts', 'type':'I', 'n_bits':'1', 'descr':'Clear to send; the destination is ready to receive a transmission sent by the UART'},
+        {'name':'rts', 'type':'O', 'n_bits':'1', 'descr':'Ready to send; the UART is ready to receive a transmission from the sender'},
+    ]},
+    {'name': 'interrupt', 'descr':'UART16550 interrupt related signals', 'ports': [
         {'name':'interrupt', 'type':'O', 'n_bits':'1', 'descr':'UART interrupt source'},
     ]}
 ]
@@ -69,3 +71,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
