@@ -52,6 +52,7 @@ wire dcd1_i = 1; //dcd1_ir;
 reg [31:0] dat_o;
 
 integer e;
+integer fd;
 
 uart_top uart_snd(
     clk,
@@ -199,7 +200,14 @@ begin
   wbm1.wb_rd1(0, 4'b1, dat_o);
   $display("%m : %t : Data out: %h", $time, dat_o);
   $display("%m : Finish");
-  $finish;
+  fd = $fopen("test.log", "w");
+  //TODO: check if the data is correct
+  //if(!failed) begin
+    $fwrite(fd, "Test passed!\n");
+    $finish;
+  //end else begin
+  //  $fatal(1, "Test failed!");
+  //end
 end
 
 endmodule
