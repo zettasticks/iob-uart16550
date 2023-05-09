@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-import os, sys
+import os
+import sys
 
 sys.path.insert(0, os.getcwd() + "/submodules/LIB/scripts")
+
 import setup
 
 name = "iob_uart16550"
@@ -204,6 +206,8 @@ regs = [
 blocks = []
 
 # Main function to setup this core and its components
+
+
 def main():
     setup.setup(sys.modules[__name__])
 
