@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-import os, sys
+import os
+import sys
 
 sys.path.insert(0, os.getcwd() + "/submodules/LIB/scripts")
+
 import setup
 
 name = "iob_uart16550"
@@ -34,6 +36,15 @@ confs = [
         "min": "NA",
         "max": "NA",
         "descr": "Address bus width",
+    },
+    # Used for regs below
+    {
+        "name": "UART_DATA_W",
+        "type": "P",
+        "val": "8",
+        "min": "NA",
+        "max": "8",
+        "descr": "",
     },
 ]
 
@@ -103,11 +114,101 @@ ios = [
     },
 ]
 
-regs = []
+# Used to create swreg files for use in testbench. These registers do not affect the core, however, they should be equal to the ones used by the core.
+regs = [
+    {
+        "name": "uart",
+        "descr": "UART software accessible registers.",
+        "regs": [
+            {
+                "name": "SOFTRESET",
+                "type": "W",
+                "n_bits": 1,
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "Soft reset.",
+            },
+            {
+                "name": "DIV",
+                "type": "W",
+                "n_bits": 16,
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "Bit duration in system clock cycles.",
+            },
+            {
+                "name": "TXDATA",
+                "type": "W",
+                "n_bits": "UART_DATA_W",
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": False,
+                "descr": "TX data.",
+            },
+            {
+                "name": "TXEN",
+                "type": "W",
+                "n_bits": 1,
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "TX enable.",
+            },
+            {
+                "name": "RXEN",
+                "type": "W",
+                "n_bits": 1,
+                "rst_val": 0,
+                "addr": 6,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "RX enable.",
+            },
+            {
+                "name": "TXREADY",
+                "type": "R",
+                "n_bits": 1,
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "TX ready to receive data.",
+            },
+            {
+                "name": "RXREADY",
+                "type": "R",
+                "n_bits": 1,
+                "rst_val": 0,
+                "addr": -1,
+                "log2n_items": 0,
+                "autologic": True,
+                "descr": "RX data is ready to be read.",
+            },
+            {
+                "name": "RXDATA",
+                "type": "R",
+                "n_bits": "UART_DATA_W",
+                "rst_val": 0,
+                "addr": 4,
+                "log2n_items": 0,
+                "autologic": False,
+                "descr": "RX data.",
+            },
+        ],
+    }
+]
 blocks = []
 
 
 # Main function to setup this core and its components
+
+
 def main():
     setup.setup(sys.modules[__name__])
 
