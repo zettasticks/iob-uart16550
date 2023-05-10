@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 
+`include "iob_utils.vh"
+
 module uart_tb;
 
 `include "uart_defines.v"
@@ -53,6 +55,10 @@ reg [31:0] dat_o;
 
 integer e;
 integer fd;
+integer failed = 0;
+
+localparam BYTE_1 = 8'b10000001;
+localparam BYTE_2 = 8'b01000010;
 
 uart_top uart_snd(
     clk,
@@ -168,18 +174,17 @@ begin
   wbm.wb_wr1(`UART_REG_LC, 4'b1000, {8'b00011011, 24'b0}); //00011011 
 
   fork begin
-    $display("%m : %t : sending : %h", $time, 8'b10000001);
-    wbm.wb_wr1(0, 4'b1, 32'b10000001);
+    $display("%m : %t : sending : %h", $time, BYTE_1);
+    wbm.wb_wr1(0, 4'b1, BYTE_1);
     @(posedge clk);
     @(posedge clk);
-    $display("%m : %t : sending : %h", $time, 8'b01000010);
-    wbm.wb_wr1(0, 4'b1, 32'b01000010);
+    $display("%m : %t : sending : %h", $time, BYTE_2);
+    wbm.wb_wr1(0, 4'b1, BYTE_2);
     wait (uart_snd.regs.tstate==0 && uart_snd.regs.transmitter.tf_count==0);
   end
   join
 end
 
-integer fd;
 // receiver side
 initial
 begin
@@ -196,19 +201,20 @@ begin
   wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
   wait(uart_rcv.regs.receiver.rf_count == 2);
   wbm1.wb_rd1(0, 4'b1, dat_o);
-  $display("%m : %t : Data out: %h", $time, dat_o);
+  $display("%m : %t : Data out: %h", $time, dat_o[7:0]);
+  if(dat_o != BYTE_1) failed = failed+1;
   @(posedge clk);
   wbm1.wb_rd1(0, 4'b1, dat_o);
-  $display("%m : %t : Data out: %h", $time, dat_o);
+  $display("%m : %t : Data out: %h", $time, dat_o[7:0]);
+  if(dat_o != BYTE_2) failed = failed+1;
   $display("%m : Finish");
   fd = $fopen("test.log", "w");
-  //TODO: check if the data is correct
-  //if(!failed) begin
-    $fwrite(fd, "Test passed!\n");
-    $fclose(fd);
-  //end else begin
-  //  $fatal(1, "Test failed!");
-  //end
+  if(!failed) begin
+    $fdisplay(fd, "Test passed!");
+  end else begin
+    $fdisplay(fd, "Test failed!");
+  end
+  $fclose(fd);
   $finish;
 end
 
