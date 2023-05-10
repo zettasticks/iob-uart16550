@@ -178,6 +178,7 @@ begin
   join
 end
 
+integer fd;
 // receiver side
 initial
 begin
@@ -199,6 +200,9 @@ begin
   wbm1.wb_rd1(0, 4'b1, dat_o);
   $display("%m : %t : Data out: %h", $time, dat_o);
   $display("%m : Finish");
+  fd = $fopen("test.log", "w");
+  $fdisplay(fd, "Test passed!"); // passes the test only when all data is received
+  $fclose(fd);
   $finish;
 end
 
