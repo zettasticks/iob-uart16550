@@ -10,54 +10,38 @@ module iob_uart16550 #(
   `include "iob_uart16550_io.vh"
   );
 
-  wire [`UART_ADDR_WIDTH-1:0] wb_addr_in;
-  wire [`UART_DATA_WIDTH-1:0] wb_data_in;
-  wire [`UART_DATA_WIDTH-1:0] wb_data_out;
-  wire wb_write_enable_in;
-  wire wb_valid_in;
-  wire wb_ready_in;
-  wire [`UART_DATA_WIDTH/8-1:0] wb_strb_in;
-  wire [`UART_DATA_WIDTH/8-1:0] wb_select_in;
-  wire wb_ack_out;
+  wire [`UART_ADDR_WIDTH-1:0] m_wb_adr;
+  wire [`UART_DATA_WIDTH/8-1:0] m_wb_sel;
+  wire m_wb_we;
+  wire m_wb_cyc;
+  wire m_wb_stb;
+  wire [`UART_DATA_WIDTH-1:0] m_wb_dat_req;
+  wire m_wb_ack;
+  wire m_wb_err;
+  wire [`UART_DATA_WIDTH-1:0] m_wb_dat_resp;
 
-  /** IOb-bus accesses */
-  reg  [0:0] iob_avalid_reg;
-  always @(posedge clk_i, posedge arst_i) begin
-    if (arst_i) begin
-      iob_avalid_reg <= 1'b0;
-    end else if (iob_avalid_i) begin
-      iob_avalid_reg <= 1'b1;
-    end else if (wb_ack_out) begin
-      iob_avalid_reg <= 1'b0;
-    end
-  end 
-  // Ready signal
-  assign iob_rvalid_o = wb_ack_out ? ~wb_write_enable_in : 1'b0;
-  //assign iob_rvalid_o = wb_ack_out; USED to pass the ack signal directly to the testbench.
-  assign iob_ready_o = iob_avalid_reg ? wb_ack_out : 1'b1;
+  assign m_wb_err = 1'b0;
 
-  // IOb to WishBone converter
-  assign wb_addr_in = iob_addr_i[`UART_ADDR_WIDTH-1:0];
-  assign wb_data_in = iob_wdata_i;
-  assign iob_rdata_o = wb_data_out;
-  assign wb_write_enable_in = |iob_wstrb_i;
-  assign wb_valid_in = iob_avalid_i;
-  assign wb_ready_in = iob_avalid_i&(~iob_rvalid_o);
-  assign wb_strb_in = iob_wstrb_i;
-  assign wb_select_in = 1<<iob_addr_i[1:0];
+  iob_iob2wishbone #(
+    ADDR_W, DATA_W, 1
+  ) iob2wishbone (
+    clk_i, cke_i, arst_i, // General input/outputs
+    iob_avalid_i, iob_addr_i, iob_wdata_i, iob_wstrb_i, iob_rvalid_o, iob_rdata_o, iob_ready_o, // IOb-bus input/outputs
+    m_wb_adr, m_wb_sel, m_wb_we, m_wb_cyc, m_wb_stb, m_wb_dat_req, m_wb_ack, m_wb_err,  m_wb_dat_resp // WishBone input/outputs
+  );
 
   uart_top uart16550 (
     .wb_clk_i(clk_i),
     // WISHBONE interface
     .wb_rst_i(arst_i),
-    .wb_adr_i(wb_addr_in),
-    .wb_dat_i(wb_data_in),
-    .wb_dat_o(wb_data_out),
-    .wb_we_i(wb_write_enable_in),
-    .wb_stb_i(wb_ready_in),
-    .wb_cyc_i(wb_valid_in),
-    .wb_sel_i(wb_select_in),
-    .wb_ack_o(wb_ack_out),
+    .wb_adr_i(m_wb_adr),
+    .wb_sel_i(m_wb_sel),
+    .wb_we_i(m_wb_we),
+    .wb_cyc_i(m_wb_cyc),
+    .wb_stb_i(m_wb_stb),
+    .wb_dat_i(m_wb_dat_req),
+    .wb_ack_o(m_wb_ack),
+    .wb_dat_o(m_wb_dat_resp),
     .int_o(interrupt),
 
 `ifdef UART_HAS_BAUDRATE_OUTPUT
