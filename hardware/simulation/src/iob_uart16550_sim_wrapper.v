@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 
-`include "uart_defines.v"
+`include "uart_defines.vh"
 
 module iob_uart16550_sim_wrapper #(
     parameter MEM_ADDR_W = 32,
-    parameter ADDR_W = `UART_ADDR_WIDTH,
-    parameter DATA_W = 32
+    parameter ADDR_W     = `UART_ADDR_WIDTH,
+    parameter DATA_W     = 32
 ) (
     input  wire              clk,       // WISHBONE clock
     // WISHBONE slave
@@ -20,11 +20,11 @@ module iob_uart16550_sim_wrapper #(
     input  wire [       3:0] wb_sel_i,  // WISHBONE byte select input
 
     // Interrupt
-    output wire int_o,  // Interrupt output
+    output wire int_o,      // Interrupt output
     // Tx
     output wire pad_stx_o,  // Transmit Byte
     // Rx
-    input wire pad_srx_i,  // Receive Byte
+    input  wire pad_srx_i,  // Receive Byte
 
 `ifdef UART_HAS_BAUDRATE_OUTPUT
     output wire baud1_o,
@@ -39,58 +39,58 @@ module iob_uart16550_sim_wrapper #(
     input  wire dcd_i
 );
 
-  // Wires
-  // // general
-  wire clk_i;
-  wire cke_i;
-  wire arst_i;
-  wire uartInterrupt;
-  // // Master interface
-  wire m_avalid;
-  wire [ADDR_W-1:0] m_address;
-  wire [DATA_W-1:0] m_wdata;
-  wire [DATA_W/8-1:0] m_wstrb;
-  wire m_rvalid;
-  wire [DATA_W-1:0] m_rdata;
-  wire m_ready;
+   // Wires
+   // // general
+   wire                clk_i;
+   wire                cke_i;
+   wire                arst_i;
+   wire                uartInterrupt;
+   // // Master interface
+   wire                m_avalid;
+   wire [  ADDR_W-1:0] m_address;
+   wire [  DATA_W-1:0] m_wdata;
+   wire [DATA_W/8-1:0] m_wstrb;
+   wire                m_rvalid;
+   wire [  DATA_W-1:0] m_rdata;
+   wire                m_ready;
 
-  // Logic
-  assign clk_i  = clk;
-  assign cke_i  = 1'b1;
-  assign arst_i = wb_rst_i;
-  assign int_o  = uartInterrupt;
+   // Logic
+   assign clk_i  = clk;
+   assign cke_i  = 1'b1;
+   assign arst_i = wb_rst_i;
+   assign int_o  = uartInterrupt;
 
-  iob_wishbone2iob #(
-      .ADDR_W(ADDR_W),
-      .DATA_W(DATA_W)
-  ) wishbone2iob (
+   iob_wishbone2iob #(
+       .ADDR_W(ADDR_W),
+       .DATA_W(DATA_W)
+   ) wishbone2iob (
       // General input/outputs
-      .clk_i(clk_i),
-      .cke_i(cke_i),
-      .arst_i(arst_i),
+      .clk_i        (clk_i),
+      .cke_i        (cke_i),
+      .arst_i       (arst_i),
       // WishBone input/outputs
-      .wb_addr_i(wb_adr_i),
-      .wb_select_i(wb_sel_i),
-      .wb_we_i(wb_we_i),
-      .wb_cyc_i(wb_cyc_i),
-      .wb_stb_i(wb_stb_i),
-      .wb_data_i(wb_dat_i),
-      .wb_ack_o(wb_ack_o),
-      .wb_data_o(wb_dat_o),
+      .wb_addr_i    (wb_adr_i),
+      .wb_select_i  (wb_sel_i),
+      .wb_we_i      (wb_we_i),
+      .wb_cyc_i     (wb_cyc_i),
+      .wb_stb_i     (wb_stb_i),
+      .wb_data_i    (wb_dat_i),
+      .wb_ack_o     (wb_ack_o),
+      .wb_data_o    (wb_dat_o),
       // IOb-bus input/outputs
-      .iob_avalid_o(m_avalid),
+      .iob_avalid_o (m_avalid),
       .iob_address_o(m_address),
-      .iob_wdata_o(m_wdata),
-      .iob_wstrb_o(m_wstrb),
-      .iob_rvalid_i(m_rvalid),
-      .iob_rdata_i(m_rdata),
-      .iob_ready_i(m_ready)
-  );
+      .iob_wdata_o  (m_wdata),
+      .iob_wstrb_o  (m_wstrb),
+      .iob_rvalid_i (m_rvalid),
+      .iob_rdata_i  (m_rdata),
+      .iob_ready_i  (m_ready)
+   );
 
-  iob_uart16550 #(
-      .DATA_W(DATA_W),  //PARAM & 32 & 64 & CPU data width
-      .ADDR_W(ADDR_W)   //CPU address section width
-  ) uart16550 (
+   iob_uart16550 #(
+       .DATA_W(DATA_W),  //PARAM & 32 & 64 & CPU data width
+       .ADDR_W(ADDR_W)   //CPU address section width
+   ) uart16550 (
       //RS232 interface
       .txd(pad_stx_o),
       .rxd(pad_srx_i),
@@ -98,18 +98,18 @@ module iob_uart16550_sim_wrapper #(
       .cts(cts_i),
 
       //CPU interface
-      .clk_i(clk_i),
-      .cke_i(cke_i),
-      .arst_i(arst_i),
+      .clk_i       (clk_i),
+      .cke_i       (cke_i),
+      .arst_i      (arst_i),
       .iob_avalid_i(m_avalid),
-      .iob_addr_i(m_address),
-      .iob_wdata_i(m_wdata),
-      .iob_wstrb_i(m_wstrb),
+      .iob_addr_i  (m_address),
+      .iob_wdata_i (m_wdata),
+      .iob_wstrb_i (m_wstrb),
       .iob_rvalid_o(m_rvalid),
-      .iob_rdata_o(m_rdata),
-      .iob_ready_o(m_ready),
+      .iob_rdata_o (m_rdata),
+      .iob_ready_o (m_ready),
 
       .interrupt(uartInterrupt)
-  );
+   );
 
 endmodule

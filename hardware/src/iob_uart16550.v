@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`include "uart_defines.v"
+`include "uart_defines.vh"
 `include "iob_lib.vh"
 `include "iob_uart16550_conf.vh"
 
@@ -10,20 +10,20 @@ module iob_uart16550 #(
     `include "iob_uart16550_io.vh"
 );
 
-  wire [  `UART_ADDR_WIDTH-1:0] m_wb_adr;
-  wire [`UART_DATA_WIDTH/8-1:0] m_wb_sel;
-  wire                          m_wb_we;
-  wire                          m_wb_cyc;
-  wire                          m_wb_stb;
-  wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_req;
-  wire                          m_wb_ack;
-  wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_resp;
+   wire [  `UART_ADDR_WIDTH-1:0] m_wb_adr;
+   wire [`UART_DATA_WIDTH/8-1:0] m_wb_sel;
+   wire                          m_wb_we;
+   wire                          m_wb_cyc;
+   wire                          m_wb_stb;
+   wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_req;
+   wire                          m_wb_ack;
+   wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_resp;
 
-  iob_iob2wishbone #(
-      .ADDR_W    (ADDR_W),
-      .DATA_W    (DATA_W),
-      .READ_BYTES(1)
-  ) iob2wishbone (
+   iob_iob2wishbone #(
+       .ADDR_W    (ADDR_W),
+       .DATA_W    (DATA_W),
+       .READ_BYTES(1)
+   ) iob2wishbone (
       // General input/outputs
       .clk_i       (clk_i),
       .cke_i       (cke_i),
@@ -45,9 +45,9 @@ module iob_uart16550 #(
       .wb_data_o   (m_wb_dat_req),
       .wb_ack_i    (m_wb_ack),
       .wb_data_i   (m_wb_dat_resp)
-  );
+   );
 
-  uart_top uart16550 (
+   uart_top uart16550 (
       .wb_clk_i (clk_i),
       // WISHBONE interface
       .wb_rst_i (arst_i),
@@ -72,6 +72,6 @@ module iob_uart16550 #(
       .dsr_pad_i(1'b1),
       .ri_pad_i (1'b0),
       .dcd_pad_i(1'b0)
-  );
+   );
 
 endmodule
