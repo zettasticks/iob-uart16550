@@ -63,7 +63,7 @@ task wb_wr1( 32 bit address, 4 bit byte select, 32 bit write data);
 
 
 task wb_wr4( 32 bit address, 4 bit byte select, integer delay,
-	32 bit data 1, 32 bit data 2, 32 bit data 3, 32 bit data 4);
+  32 bit data 1, 32 bit data 2, 32 bit data 3, 32 bit data 4);
 
 - Performs 4 consecutive WISHBONE writes
 - Strobe is deasserted between writes for 'delay' number of cycles
@@ -71,7 +71,7 @@ task wb_wr4( 32 bit address, 4 bit byte select, integer delay,
 
 
 task wb_wr_mult( 32 bit address, 4 bit byte select, integer delay,
-	integer count);
+  integer count);
 
 - Simular to wb_wr4, except it pwrforms "count" number of write cycles.
   The data is taken from the internal wr_bub[] memory.
@@ -80,7 +80,7 @@ task wb_wr_mult( 32 bit address, 4 bit byte select, integer delay,
 
 
 task wb_rmw( 32 bit address, 4 bit byte select, integer delay,
-	integer rcount, integer wcount);
+  integer rcount, integer wcount);
 
 - This task performs "rcount" read cycles, followed by wcount write cycles.
 - read data is placed in to the internal rd_buf[] memory, write data is
@@ -95,7 +95,7 @@ task wb_rd1( 32 bit address, 4 bit byte select, 32 bit read data);
 
 
 task wb_rd4( 32 bit address, 4 bit byte select, integer delay,
-	32 bit data 1, 32 bit data 2, 32 bit data 3, 32 bit data 4);
+  32 bit data 1, 32 bit data 2, 32 bit data 3, 32 bit data 4);
 
 - Performs 4 consecutive WISHBONE reads
 - Strobe is deasserted between reads for 'delay' number of cycles
@@ -103,7 +103,7 @@ task wb_rd4( 32 bit address, 4 bit byte select, integer delay,
 
 
 task wb_rd_mult( 32 bit address, 4 bit byte select, integer delay,
-	integer count);
+  integer count);
 
 - Simular to wb_rd4, except it pwrforms "count" number of read cycles.
   The data is read in to the internal rd_buf[] memory.
@@ -426,7 +426,7 @@ module wb_mast (
         stb  = 1;
         we   = 1;
         sel  = s;
-        //	if(n!=0)
+        //  if(n!=0)
         @(posedge clk);
         while (~ack & ~err) @(posedge clk);
         #2;
