@@ -320,10 +320,10 @@ module uart_receiver (
         end
         sr_rec_prepare: begin
           case (lcr[  /*`UART_LC_BITS*/ 1:0])  // number of bits in a word
-            2'b00: rbit_counter <= #1 3'b100;
-            2'b01: rbit_counter <= #1 3'b101;
-            2'b10: rbit_counter <= #1 3'b110;
-            2'b11: rbit_counter <= #1 3'b111;
+            2'b00:   rbit_counter <= #1 3'b100;
+            2'b01:   rbit_counter <= #1 3'b101;
+            2'b10:   rbit_counter <= #1 3'b110;
+            default: rbit_counter <= #1 3'b111;
           endcase
           if (rcounter16_eq_0) begin
             rstate <= #1 sr_rec_bit;
@@ -336,10 +336,10 @@ module uart_receiver (
           if (rcounter16_eq_0) rstate <= #1 sr_end_bit;
           if (rcounter16_eq_7)  // read the bit
             case (lcr[  /*`UART_LC_BITS*/ 1:0])  // number of bits in a word
-              2'b00: rshift[4:0] <= #1{srx_pad_i, rshift[4:1]};
-              2'b01: rshift[5:0] <= #1{srx_pad_i, rshift[5:1]};
-              2'b10: rshift[6:0] <= #1{srx_pad_i, rshift[6:1]};
-              2'b11: rshift[7:0] <= #1{srx_pad_i, rshift[7:1]};
+              2'b00:   rshift[4:0] <= #1{srx_pad_i, rshift[4:1]};
+              2'b01:   rshift[5:0] <= #1{srx_pad_i, rshift[5:1]};
+              2'b10:   rshift[6:0] <= #1{srx_pad_i, rshift[6:1]};
+              default: rshift[7:0] <= #1{srx_pad_i, rshift[7:1]};
             endcase
           rcounter16 <= #1 rcounter16_minus_1;
         end
@@ -375,10 +375,10 @@ module uart_receiver (
           case ({
             lcr[`UART_LC_EP], lcr[`UART_LC_SP]
           })
-            2'b00: rparity_error <= #1 rparity_xor == 0;  // no error if parity 1
-            2'b01: rparity_error <= #1 ~rparity;  // parity should sticked to 1
-            2'b10: rparity_error <= #1 rparity_xor == 1;  // error if parity is odd
-            2'b11: rparity_error <= #1 rparity;  // parity should be sticked to 0
+            2'b00:   rparity_error <= #1 rparity_xor == 0;  // no error if parity 1
+            2'b01:   rparity_error <= #1 ~rparity;  // parity should sticked to 1
+            2'b10:   rparity_error <= #1 rparity_xor == 1;  // error if parity is odd
+            default: rparity_error <= #1 rparity;  // parity should be sticked to 0
           endcase
           rcounter16 <= #1 rcounter16_minus_1;
           rstate <= #1 sr_wait1;
@@ -443,7 +443,7 @@ module uart_receiver (
       4'b0010, 4'b0101, 4'b1001:          toc_value = 575;  // 9 bits
       4'b0011, 4'b0110, 4'b1010, 4'b1101: toc_value = 639;  // 10 bits
       4'b0111, 4'b1011, 4'b1110:          toc_value = 703;  // 11 bits
-      4'b1111:                            toc_value = 767;  // 12 bits
+      default:                            toc_value = 767;  // 12 bits
     endcase  // case(lcr[3:0])
 
   wire [7:0] brc_value;  // value to be set to break counter

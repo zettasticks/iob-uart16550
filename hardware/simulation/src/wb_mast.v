@@ -185,8 +185,8 @@ module wb_mast (
       rd_cnt = 0;
       wr_cnt = 0;
       for (n = 0; n < mem_size; n = n + 1) begin
-        rd_mem[n] = $random;
-        wr_mem[n] = $random;
+        rd_mem[n] = $urandom;
+        wr_mem[n] = $urandom;
       end
     end
   endtask

@@ -254,7 +254,7 @@ module uart_transmitter (
               bit_counter <= #1 3'b110;
               parity_xor  <= #1 ^tf_data_out[6:0];
             end
-            2'b11: begin
+            default: begin
               bit_counter <= #1 3'b111;
               parity_xor  <= #1 ^tf_data_out[7:0];
             end
@@ -288,7 +288,7 @@ module uart_transmitter (
                 2'b00: bit_out <= #1 ~parity_xor;
                 2'b01: bit_out <= #1 1'b1;
                 2'b10: bit_out <= #1 parity_xor;
-                2'b11: bit_out <= #1 1'b0;
+                default: bit_out <= #1 1'b0;
               endcase
               tstate <= #1 s_send_parity;
             end

@@ -374,20 +374,32 @@ reg  [7:0]                block_value; // One character length minus stop bit
 // Transmitter Instance
 wire serial_out;
 
-uart_transmitter transmitter(clk, wb_rst_i, lcr, tf_push, wb_dat_i, enable, serial_out, tstate, tf_count, tx_reset, lsr_mask);
-
-  // Synchronizing and sampling serial RX input
-  uart_sync_flops    i_uart_sync_flops
-  (
-    .rst_i           (wb_rst_i),
-    .clk_i           (clk),
-    .stage1_rst_i    (1'b0),
-    .stage1_clk_en_i (1'b1),
-    .async_dat_i     (srx_pad_i),
-    .sync_dat_o      (srx_pad)
+uart_transmitter transmitter(
+  .clk(clk), 
+  .wb_rst_i(wb_rst_i), 
+  .lcr(lcr), 
+  .tf_push(tf_push), 
+  .wb_dat_i(wb_dat_i), 
+  .enable(enable), 
+  .tx_reset(serial_out), 
+  .lsr_mask(tstate), 
+  .stx_pad_o(tf_count), 
+  .tstate(tx_reset), 
+  .tf_count(lsr_mask)
   );
-  defparam i_uart_sync_flops.width      = 1;
-  defparam i_uart_sync_flops.init_value = 1'b1;
+
+// Synchronizing and sampling serial RX input
+uart_sync_flops    i_uart_sync_flops
+(
+  .rst_i           (wb_rst_i),
+  .clk_i           (clk),
+  .stage1_rst_i    (1'b0),
+  .stage1_clk_en_i (1'b1),
+  .async_dat_i     (srx_pad_i),
+  .sync_dat_o      (srx_pad)
+);
+localparam i_uart_sync_flops.width      = 1;
+localparam i_uart_sync_flops.init_value = 1'b1;
 
 // handle loopback
 wire serial_in = loopback ? serial_out : srx_pad;
@@ -397,8 +409,23 @@ wire rf_overrun;
 wire rf_push_pulse;
 
 // Receiver Instance
-uart_receiver receiver(clk, wb_rst_i, lcr, rf_pop, serial_in, enable,
-  counter_t, rf_count, rf_data_out, rf_error_bit, rf_overrun, rx_reset, lsr_mask, rstate, rf_push_pulse);
+uart_receiver receiver(
+  .clk(clk), 
+  .wb_rst_i(wb_rst_i), 
+  .lcr(lcr), 
+  .rf_pop(rf_pop), 
+  .srx_pad_i(serial_in), 
+  .enable(enable),
+  .rx_reset(counter_t), 
+  .lsr_mask(rf_count), 
+  .counter_t(rf_data_out), 
+  .rf_count(rf_error_bit), 
+  .rf_data_out(rf_overrun), 
+  .rf_overrun(rx_reset), 
+  .rf_error_bit(lsr_mask), 
+  .rstate(rstate), 
+  .rf_push_pulse(rf_push_pulse)
+  );
 
 
 // Asynchronous reading here because the outputs are sampled in uart_wb.v file
@@ -406,7 +433,7 @@ always @(dl or dlab or ier or iir or scratch
       or lcr or lsr or msr or rf_data_out or wb_addr_i or wb_re_i)   // asynchrounous reading
 begin
   case (wb_addr_i)
-    `UART_REG_RB   : wb_dat_o = dlab ? dl[`UART_DL1] : rf_data_out[10:3];
+    `UART_REG_RB  : wb_dat_o = dlab ? dl[`UART_DL1] : rf_data_out[10:3];
     `UART_REG_IE  : wb_dat_o = dlab ? dl[`UART_DL2] : ier;
     `UART_REG_II  : wb_dat_o = {4'b1100,iir};
     `UART_REG_LC  : wb_dat_o = lcr;
