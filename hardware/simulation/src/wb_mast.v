@@ -153,8 +153,8 @@ module wb_mast (
   reg [3:0] sel;
   reg we;
 
-  reg [31:0] rd_mem[mem_size:0];
-  reg [31:0] wr_mem[mem_size:0];
+  reg [31:0] rd_mem[mem_size];
+  reg [31:0] wr_mem[mem_size];
   integer rd_cnt;
   integer wr_cnt;
 

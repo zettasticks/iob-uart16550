@@ -184,7 +184,7 @@ module uart_rfifo (
   wire [fifo_width-1:0] data_out;
   wire [7:0] data8_out;
   // flags FIFO
-  reg [2:0] fifo[fifo_depth-1:0];
+  reg [2:0] fifo[fifo_depth-1];
 
   // FIFO pointers
   reg [fifo_pointer_w-1:0] top;
