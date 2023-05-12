@@ -100,7 +100,7 @@ module raminfr (
    input [data_width-1:0] di;
    //output [data_width-1:0] spo;
    output [data_width-1:0] dpo;
-   reg  [data_width-1:0] ram  [depth-1];
+   reg  [data_width-1:0] ram  [depth];
 
    wire [data_width-1:0] dpo;
    wire [data_width-1:0] di;

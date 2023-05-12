@@ -402,11 +402,11 @@ module uart_regs (
       .tf_push  (tf_push),
       .wb_dat_i (wb_dat_i),
       .enable   (enable),
-      .tx_reset (serial_out),
-      .lsr_mask (tstate),
-      .stx_pad_o(tf_count),
-      .tstate   (tx_reset),
-      .tf_count (lsr_mask)
+      .tx_reset (tx_reset),
+      .lsr_mask (lsr_mask),
+      .stx_pad_o(serial_out),
+      .tstate   (tstate),
+      .tf_count (tf_count)
    );
 
    // Synchronizing and sampling serial RX input
@@ -438,13 +438,13 @@ module uart_regs (
       .rf_pop       (rf_pop),
       .srx_pad_i    (serial_in),
       .enable       (enable),
-      .rx_reset     (counter_t),
-      .lsr_mask     (rf_count),
-      .counter_t    (rf_data_out),
-      .rf_count     (rf_error_bit),
-      .rf_data_out  (rf_overrun),
-      .rf_overrun   (rx_reset),
-      .rf_error_bit (lsr_mask),
+      .rx_reset     (rx_reset),
+      .lsr_mask     (lsr_mask),
+      .counter_t    (counter_t),
+      .rf_count     (rf_count),
+      .rf_data_out  (rf_data_out),
+      .rf_overrun   (rf_overrun),
+      .rf_error_bit (rf_error_bit),
       .rstate       (rstate),
       .rf_push_pulse(rf_push_pulse)
    );
