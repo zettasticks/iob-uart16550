@@ -184,16 +184,16 @@ module uart_tfifo (
   wire [fifo_pointer_w-1:0] top_plus_1 = top + 1'b1;
 
   raminfr #(
-    .addr_width(fifo_pointer_w), 
-    .data_width(fifo_width), 
-    .depth(fifo_depth)
+      .addr_width(fifo_pointer_w),
+      .data_width(fifo_width),
+      .depth(fifo_depth)
   ) tfifo (
-    .clk(clk),
-    .we(push),
-    .a(top),
-    .dpra(bottom),
-    .di(data_in),
-    .dpo(data_out)
+      .clk(clk),
+      .we(push),
+      .a(top),
+      .dpra(bottom),
+      .di(data_in),
+      .dpo(data_out)
   );
 
 

@@ -285,9 +285,9 @@ module uart_transmitter (
               case ({
                 lcr[`UART_LC_EP], lcr[`UART_LC_SP]
               })
-                2'b00: bit_out <= #1 ~parity_xor;
-                2'b01: bit_out <= #1 1'b1;
-                2'b10: bit_out <= #1 parity_xor;
+                2'b00:   bit_out <= #1 ~parity_xor;
+                2'b01:   bit_out <= #1 1'b1;
+                2'b10:   bit_out <= #1 parity_xor;
                 default: bit_out <= #1 1'b0;
               endcase
               tstate <= #1 s_send_parity;

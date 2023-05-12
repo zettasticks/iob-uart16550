@@ -196,9 +196,9 @@ module uart_rfifo (
   wire [fifo_pointer_w-1:0] top_plus_1 = top + 1'b1;
 
   raminfr #(
-    .addr_width(fifo_pointer_w), 
-    .data_width(8), 
-    .depth(fifo_depth)
+      .addr_width(fifo_pointer_w),
+      .data_width(8),
+      .depth(fifo_depth)
   ) rfifo (
       .clk(clk),
       .we(push),
