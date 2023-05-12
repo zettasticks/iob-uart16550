@@ -252,7 +252,7 @@ begin
       })
         2'b10:
         if (count<fifo_depth)  // overrun condition
-			begin
+      begin
           top       <= #1 top_plus_1;
           fifo[top] <= #1 data_in[2:0];
           count     <= #1 count + 1'b1;
@@ -306,9 +306,9 @@ begin
   wire [2:0] word15 = fifo[15];
 
   // a 1 is returned if any of the error bits in the fifo is 1
-  assign	error_bit = |(word0[2:0]  | word1[2:0]  | word2[2:0]  | word3[2:0]  |
-            		      word4[2:0]  | word5[2:0]  | word6[2:0]  | word7[2:0]  |
-            		      word8[2:0]  | word9[2:0]  | word10[2:0] | word11[2:0] |
-            		      word12[2:0] | word13[2:0] | word14[2:0] | word15[2:0] );
+  assign  error_bit = |(word0[2:0]  | word1[2:0]  | word2[2:0]  | word3[2:0]  |
+                      word4[2:0]  | word5[2:0]  | word6[2:0]  | word7[2:0]  |
+                      word8[2:0]  | word9[2:0]  | word10[2:0] | word11[2:0] |
+                      word12[2:0] | word13[2:0] | word14[2:0] | word15[2:0] );
 
 endmodule

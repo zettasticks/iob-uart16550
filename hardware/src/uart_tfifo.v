@@ -209,7 +209,7 @@ begin
       })
         2'b10:
         if (count<fifo_depth)  // overrun condition
-			begin
+      begin
           top   <= #1 top_plus_1;
           count <= #1 count + 1'b1;
         end

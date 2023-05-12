@@ -305,7 +305,7 @@ module uart_receiver (
           rf_data_in <= #1 0;
           rcounter16 <= #1 4'b1110;
           if (srx_pad_i==1'b0 & ~break_error)   // detected a pulse (start bit?)
-			begin
+      begin
             rstate <= #1 sr_rec_start;
           end
         end
@@ -359,8 +359,8 @@ module uart_receiver (
           rcounter16 <= #1 4'b1110;
         end
         sr_rec_parity: begin
-          if (rcounter16_eq_7)	// read the parity
-				begin
+          if (rcounter16_eq_7)  // read the parity
+        begin
             rparity <= #1 srx_pad_i;
             rstate  <= #1 sr_ca_lc_parity;
           end
@@ -389,8 +389,8 @@ module uart_receiver (
           rcounter16 <= #1 4'b1110;
         end else rcounter16 <= #1 rcounter16_minus_1;
         sr_rec_stop: begin
-          if (rcounter16_eq_7)	// read the parity
-				begin
+          if (rcounter16_eq_7)  // read the parity
+        begin
             rframing_error <= #1 !srx_pad_i;  // no framing error if input is 1 (stop bit)
             rstate <= #1 sr_push;
           end
@@ -398,7 +398,7 @@ module uart_receiver (
         end
         sr_push: begin
           ///////////////////////////////////////
-          //				$display($time, ": received: %b", rf_data_in);
+          //        $display($time, ": received: %b", rf_data_in);
           if (srx_pad_i | break_error) begin
             if (break_error)
               rf_data_in <= #1{8'b0, 3'b100};  // break input (empty character) to receiver FIFO
@@ -463,7 +463,7 @@ module uart_receiver (
   always @(posedge clk or posedge wb_rst_i) begin
     if (wb_rst_i) counter_t <= #1 10'd639;  // 10 bits for the default 8N1
     else
-		if(rf_push_pulse || rf_pop || rf_count == 0) // counter is reset when RX FIFO is empty, accessed or above trigger level
+    if(rf_push_pulse || rf_pop || rf_count == 0) // counter is reset when RX FIFO is empty, accessed or above trigger level
       counter_t <= #1 toc_value;
     else if (enable && counter_t != 10'b0)  // we don't want to underflow
       counter_t <= #1 counter_t - 1;

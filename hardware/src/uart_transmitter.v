@@ -231,7 +231,7 @@ module uart_transmitter (
       case (tstate)
         s_idle:
         if (~|tf_count) // if tf_count==0
-			begin
+      begin
           tstate <= #1 s_idle;
           stx_o_tmp <= #1 1'b1;
         end else begin

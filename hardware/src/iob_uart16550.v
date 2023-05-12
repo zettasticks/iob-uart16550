@@ -57,7 +57,7 @@ module iob_uart16550 #(
 `ifdef UART_HAS_BAUDRATE_OUTPUT
       .baud1_o  (),
 `endif
-      // UART	signals
+      // UART signals
       .srx_pad_i(rxd),
       .stx_pad_o(txd),
       .rts_pad_o(rts),
