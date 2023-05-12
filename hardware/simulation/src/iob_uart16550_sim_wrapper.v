@@ -53,9 +53,6 @@ module iob_uart16550_sim_wrapper #(
   wire m_rvalid;
   wire [DATA_W-1:0]   m_rdata;
   wire m_ready;
-  // // Aux
-  wire wb_err_o;
-  assign wb_err_o = 1'b0;
 
   // Logic
   assign clk_i = clk;
@@ -67,7 +64,7 @@ module iob_uart16550_sim_wrapper #(
     ADDR_W, DATA_W
   ) wishbone2iob (
     clk_i, cke_i, arst_i, // General input/outputs
-    wb_adr_i, wb_sel_i, wb_we_i, wb_cyc_i, wb_stb_i,  wb_dat_i, wb_ack_o, wb_err_o,  wb_dat_o, // WishBone input/outputs
+    wb_adr_i, wb_sel_i, wb_we_i, wb_cyc_i, wb_stb_i,  wb_dat_i, wb_ack_o, wb_dat_o, // WishBone input/outputs
     m_avalid, m_address, m_wdata, m_wstrb, m_rvalid, m_rdata, m_ready // IOb-bus input/outputs
   );
 

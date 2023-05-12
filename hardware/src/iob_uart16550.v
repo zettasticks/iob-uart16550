@@ -17,17 +17,14 @@ module iob_uart16550 #(
   wire m_wb_stb;
   wire [`UART_DATA_WIDTH-1:0] m_wb_dat_req;
   wire m_wb_ack;
-  wire m_wb_err;
   wire [`UART_DATA_WIDTH-1:0] m_wb_dat_resp;
-
-  assign m_wb_err = 1'b0;
 
   iob_iob2wishbone #(
     ADDR_W, DATA_W, 1
   ) iob2wishbone (
     clk_i, cke_i, arst_i, // General input/outputs
     iob_avalid_i, iob_addr_i, iob_wdata_i, iob_wstrb_i, iob_rvalid_o, iob_rdata_o, iob_ready_o, // IOb-bus input/outputs
-    m_wb_adr, m_wb_sel, m_wb_we, m_wb_cyc, m_wb_stb, m_wb_dat_req, m_wb_ack, m_wb_err,  m_wb_dat_resp // WishBone input/outputs
+    m_wb_adr, m_wb_sel, m_wb_we, m_wb_cyc, m_wb_stb, m_wb_dat_req, m_wb_ack, m_wb_dat_resp // WishBone input/outputs
   );
 
   uart_top uart16550 (
