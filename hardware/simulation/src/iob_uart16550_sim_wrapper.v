@@ -26,6 +26,10 @@ module iob_uart16550_sim_wrapper #(
     // Rx
     input wire pad_srx_i,  // Receive Byte
 
+`ifdef UART_HAS_BAUDRATE_OUTPUT
+    output wire baud1_o,
+`endif
+
     // modem signals
     output wire rts_o,
     input  wire cts_i,
@@ -33,10 +37,6 @@ module iob_uart16550_sim_wrapper #(
     input  wire dsr_i,
     input  wire ri_i,
     input  wire dcd_i
-`ifdef UART_HAS_BAUDRATE_OUTPUT
-    , 
-    output wire baud1_o
-`endif
 );
 
   // Wires
