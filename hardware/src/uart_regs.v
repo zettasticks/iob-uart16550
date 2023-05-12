@@ -389,7 +389,11 @@ uart_transmitter transmitter(
   );
 
 // Synchronizing and sampling serial RX input
-uart_sync_flops    i_uart_sync_flops
+uart_sync_flops #(
+  .Tp(1),
+  .width(1),
+  .init_value(1'b1)
+) i_uart_sync_flops
 (
   .rst_i           (wb_rst_i),
   .clk_i           (clk),
@@ -398,8 +402,6 @@ uart_sync_flops    i_uart_sync_flops
   .async_dat_i     (srx_pad_i),
   .sync_dat_o      (srx_pad)
 );
-localparam i_uart_sync_flops.width      = 1;
-localparam i_uart_sync_flops.init_value = 1'b1;
 
 // handle loopback
 wire serial_in = loopback ? serial_out : srx_pad;
@@ -590,7 +592,7 @@ always @(fcr)
     2'b00 : trigger_level = 1;
     2'b01 : trigger_level = 4;
     2'b10 : trigger_level = 8;
-    2'b11 : trigger_level = 14;
+    default : trigger_level = 14;
   endcase // case(fcr[`UART_FC_TL])
 
 //
@@ -750,7 +752,7 @@ always @(lcr)
     4'b0010, 4'b0101, 4'b1001           : block_value = 127; // 8 bits
     4'b0011, 4'b0110, 4'b1010, 4'b1101  : block_value = 143; // 9 bits
     4'b0111, 4'b1011, 4'b1110           : block_value = 159; // 10 bits
-    4'b1111                             : block_value = 175; // 11 bits
+    default                             : block_value = 175; // 11 bits
   endcase // case(lcr[3:0])
 
 // Counting time of one character minus stop bit
