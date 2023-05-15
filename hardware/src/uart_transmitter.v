@@ -324,8 +324,7 @@ module uart_transmitter (
             tstate <= #1 s_idle;
          endcase
       end  // end if enable
-          else
-         tf_pop <= #1 1'b0;  // tf_pop must be 1 cycle width
+          else tf_pop <= #1 1'b0;  // tf_pop must be 1 cycle width
    end  // transmitter logic
 
    assign stx_pad_o = lcr[`UART_LC_BC] ? 1'b0 : stx_o_tmp;  // Break condition
