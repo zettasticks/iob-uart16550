@@ -68,13 +68,13 @@
 
 
 module uart_sync_flops (
-    // internal signals
-    rst_i,
-    clk_i,
-    stage1_rst_i,
-    stage1_clk_en_i,
-    async_dat_i,
-    sync_dat_o
+   // internal signals
+   rst_i,
+   clk_i,
+   stage1_rst_i,
+   stage1_clk_en_i,
+   async_dat_i,
+   sync_dat_o
 );
 
    parameter Tp = 1;

@@ -5,9 +5,9 @@
 `include "iob_uart16550_conf.vh"
 
 module iob_uart16550 #(
-    `include "iob_uart16550_params.vh"
+   `include "iob_uart16550_params.vh"
 ) (
-    `include "iob_uart16550_io.vh"
+   `include "iob_uart16550_io.vh"
 );
 
    wire [  `UART_ADDR_WIDTH-1:0] m_wb_adr;
@@ -20,9 +20,9 @@ module iob_uart16550 #(
    wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_resp;
 
    iob_iob2wishbone #(
-       .ADDR_W    (ADDR_W),
-       .DATA_W    (DATA_W),
-       .READ_BYTES(1)
+      .ADDR_W    (ADDR_W),
+      .DATA_W    (DATA_W),
+      .READ_BYTES(1)
    ) iob2wishbone (
       // General input/outputs
       .clk_i       (clk_i),

@@ -5,56 +5,56 @@
 
 module uart_tb;
 
-   reg                            clkr;
-   reg                            wb_rst_ir;
-   wire    [`UART_ADDR_WIDTH-1:0] wb_adr_i;
-   wire    [                31:0] wb_dat_i;
-   wire    [                31:0] wb_dat_o;
-   wire                           wb_we_i;
-   wire                           wb_stb_i;
-   wire                           wb_cyc_i;
-   wire                           wb_ack_o;
-   wire    [                 3:0] wb_sel_i;
-   wire                           int_o;
-   wire                           pad_stx_o;
-   wire                           rts_o;
-   wire                           dtr_o;
-   reg                            pad_srx_ir;
+   reg                                                 clkr;
+   reg                                                 wb_rst_ir;
+   wire                         [`UART_ADDR_WIDTH-1:0] wb_adr_i;
+   wire                         [                31:0] wb_dat_i;
+   wire                         [                31:0] wb_dat_o;
+   wire                                                wb_we_i;
+   wire                                                wb_stb_i;
+   wire                                                wb_cyc_i;
+   wire                                                wb_ack_o;
+   wire                         [                 3:0] wb_sel_i;
+   wire                                                int_o;
+   wire                                                pad_stx_o;
+   wire                                                rts_o;
+   wire                                                dtr_o;
+   reg                                                 pad_srx_ir;
 
    // All the signals and regs named with a 1 are receiver fifo signals
-   wire    [`UART_ADDR_WIDTH-1:0] wb1_adr_i;
-   wire    [                31:0] wb1_dat_i;
-   wire    [                31:0] wb1_dat_o;
-   wire                           wb1_we_i;
-   wire                           wb1_stb_i;
-   wire                           wb1_cyc_i;
-   wire                           wb1_ack_o;
-   wire    [                 3:0] wb1_sel_i;
-   wire                           int1_o;
-   wire                           stx1_o;
-   wire                           rts1_o;
-   wire                           dtr1_o;
-   reg                            srx1_ir;
+   wire                         [`UART_ADDR_WIDTH-1:0] wb1_adr_i;
+   wire                         [                31:0] wb1_dat_i;
+   wire                         [                31:0] wb1_dat_o;
+   wire                                                wb1_we_i;
+   wire                                                wb1_stb_i;
+   wire                                                wb1_cyc_i;
+   wire                                                wb1_ack_o;
+   wire                         [                 3:0] wb1_sel_i;
+   wire                                                int1_o;
+   wire                                                stx1_o;
+   wire                                                rts1_o;
+   wire                                                dtr1_o;
+   reg                                                 srx1_ir;
 
-   wire                           clk = clkr;
-   wire                           wb_rst_i = wb_rst_ir;
-   wire                           pad_srx_i = pad_srx_ir;
-   wire                           cts_i = 1;  //cts_ir;
-   wire                           dsr_i = 1;  //dsr_ir;
-   wire                           ri_i = 1;  //ri_ir;
-   wire                           dcd_i = 1;  //dcd_ir;
+   wire clk = clkr;
+   wire wb_rst_i = wb_rst_ir;
+   wire pad_srx_i = pad_srx_ir;
+   wire cts_i = 1;  //cts_ir;
+   wire dsr_i = 1;  //dsr_ir;
+   wire ri_i = 1;  //ri_ir;
+   wire dcd_i = 1;  //dcd_ir;
 
-   wire                           srx1_i = srx1_ir;
-   wire                           cts1_i = 1;  //cts1_ir;
-   wire                           dsr1_i = 1;  //dsr1_ir;
-   wire                           ri1_i = 1;  //ri1_ir;
-   wire                           dcd1_i = 1;  //dcd1_ir;
+   wire srx1_i = srx1_ir;
+   wire cts1_i = 1;  //cts1_ir;
+   wire dsr1_i = 1;  //dsr1_ir;
+   wire ri1_i = 1;  //ri1_ir;
+   wire dcd1_i = 1;  //dcd1_ir;
 
-   reg     [                31:0] dat_o;
+   reg                          [                31:0] dat_o;
 
-   integer                        e;
-   integer                        fd;
-   integer                        failed = 0;
+   integer                                             e;
+   integer                                             fd;
+   integer                                             failed = 0;
 
    localparam BYTE_1 = 8'b10000001;
    localparam BYTE_2 = 8'b01000010;
@@ -135,14 +135,14 @@ module uart_tb;
 `ifdef VCD
    initial begin
       $dumpfile("uut.vcd");
-      $dumpvars;
+      $dumpvars();
    end
 `endif
 
    initial begin
       clkr = 0;
       #50000 $display("BOOM!");
-      $finish;
+      $finish();
    end
 
    initial begin
@@ -206,11 +206,11 @@ module uart_tb;
 
       fork
          begin
-            $display("%m : %t : sending : %h", $time, BYTE_1);
+            $display("%m : %t : sending : %h", $time(), BYTE_1);
             wbm.wb_wr1(0, 4'h1, BYTE_1);
             @(posedge clk);
             @(posedge clk);
-            $display("%m : %t : sending : %h", $time, BYTE_2);
+            $display("%m : %t : sending : %h", $time(), BYTE_2);
             wbm.wb_wr1(0, 4'h1, BYTE_2);
             wait (uart_snd.uart16550.uart16550.regs.tstate == 0 &&
                   uart_snd.uart16550.uart16550.regs.transmitter.tf_count == 0);
@@ -233,11 +233,11 @@ module uart_tb;
       wbm1.wb_wr1(`UART_REG_IE, 4'b0010, {16'b0, 8'b00001111, 8'b0});
       wait (uart_rcv.uart16550.uart16550.regs.receiver.rf_count == 2);
       wbm1.wb_rd1(0, 4'h1, dat_o);
-      $display("%m : %t : Data out: %h", $time, dat_o[7:0]);
+      $display("%m : %t : Data out: %h", $time(), dat_o[7:0]);
       if (dat_o != BYTE_1) failed = failed + 1;
       @(posedge clk);
       wbm1.wb_rd1(0, 4'h1, dat_o);
-      $display("%m : %t : Data out: %h", $time, dat_o[7:0]);
+      $display("%m : %t : Data out: %h", $time(), dat_o[7:0]);
       if (dat_o != BYTE_2) failed = failed + 1;
       $display("%m : Finish");
       fd = $fopen("test.log", "w");
@@ -247,7 +247,7 @@ module uart_tb;
          $fdisplay(fd, "Test failed!");
       end
       $fclose(fd);
-      $finish;
+      $finish();
    end
 
 endmodule

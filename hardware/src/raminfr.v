@@ -81,12 +81,12 @@
 `timescale 1ns / 1ps
 //Following is the Verilog code for a dual-port RAM with asynchronous read.
 module raminfr (
-    clk,
-    we,
-    a,
-    dpra,
-    di,
-    dpo
+   clk,
+   we,
+   a,
+   dpra,
+   di,
+   dpo
 );
 
    parameter addr_width = 4;

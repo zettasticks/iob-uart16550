@@ -117,18 +117,18 @@ task wb_rd_mult( 32 bit address, 4 bit byte select, integer delay,
 `timescale 1ns / 1ps
 
 module wb_mast (
-    clk,
-    rst,
-    adr,
-    din,
-    dout,
-    cyc,
-    stb,
-    sel,
-    we,
-    ack,
-    err,
-    rty
+   clk,
+   rst,
+   adr,
+   din,
+   dout,
+   cyc,
+   stb,
+   sel,
+   we,
+   ack,
+   err,
+   rty
 );
 
    input clk, rst;
@@ -185,8 +185,8 @@ module wb_mast (
          rd_cnt = 0;
          wr_cnt = 0;
          for (n = 0; n < mem_size; n = n + 1) begin
-            rd_mem[n] = $urandom;
-            wr_mem[n] = $urandom;
+            rd_mem[n] = $urandom();
+            wr_mem[n] = $urandom();
          end
       end
    endtask
