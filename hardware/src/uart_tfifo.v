@@ -140,18 +140,18 @@
 `include "uart_defines.vh"
 
 module uart_tfifo (
-    clk,
-    wb_rst_i,
-    data_in,
-    data_out,
-    // Control signals
-    push,  // push strobe, active high
-    pop,  // pop strobe, active high
-    // status signals
-    overrun,
-    count,
-    fifo_reset,
-    reset_status
+   clk,
+   wb_rst_i,
+   data_in,
+   data_out,
+   // Control signals
+   push,  // push strobe, active high
+   pop,  // pop strobe, active high
+   // status signals
+   overrun,
+   count,
+   fifo_reset,
+   reset_status
 );
 
 
@@ -173,20 +173,20 @@ module uart_tfifo (
    output overrun;
    output [fifo_counter_w-1:0] count;
 
-   wire [    fifo_width-1:0] data_out;
+   wire [    fifo_width-1:0]                          data_out;
 
    // FIFO pointers
-   reg  [fifo_pointer_w-1:0] top;
-   reg  [fifo_pointer_w-1:0] bottom;
+   reg  [fifo_pointer_w-1:0]                          top;
+   reg  [fifo_pointer_w-1:0]                          bottom;
 
-   reg  [fifo_counter_w-1:0] count;
-   reg                       overrun;
+   reg  [fifo_counter_w-1:0]                          count;
+   reg                                                overrun;
    wire [fifo_pointer_w-1:0] top_plus_1 = top + 1'b1;
 
    raminfr #(
-       .addr_width(fifo_pointer_w),
-       .data_width(fifo_width),
-       .depth     (fifo_depth)
+      .addr_width(fifo_pointer_w),
+      .data_width(fifo_width),
+      .depth     (fifo_depth)
    ) tfifo (
       .clk (clk),
       .we  (push),

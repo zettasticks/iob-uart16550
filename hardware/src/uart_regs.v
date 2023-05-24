@@ -227,40 +227,40 @@
 `define UART_DL2 15:8
 
 module uart_regs (
-    clk,
-    wb_rst_i,
-    wb_addr_i,
-    wb_dat_i,
-    wb_dat_o,
-    wb_we_i,
-    wb_re_i,
+   clk,
+   wb_rst_i,
+   wb_addr_i,
+   wb_dat_i,
+   wb_dat_o,
+   wb_we_i,
+   wb_re_i,
 
-    // additional signals
-    modem_inputs,
-    stx_pad_o,
-    srx_pad_i,
+   // additional signals
+   modem_inputs,
+   stx_pad_o,
+   srx_pad_i,
 
 `ifdef DATA_BUS_WIDTH_8
 `else
-    // debug interface signals  enabled
-    ier,
-    iir,
-    fcr,
-    mcr,
-    lcr,
-    msr,
-    lsr,
-    rf_count,
-    tf_count,
-    tstate,
-    rstate,
+   // debug interface signals  enabled
+   ier,
+   iir,
+   fcr,
+   mcr,
+   lcr,
+   msr,
+   lsr,
+   rf_count,
+   tf_count,
+   tstate,
+   rstate,
 `endif
-    rts_pad_o,
-    dtr_pad_o,
+   rts_pad_o,
+   dtr_pad_o,
 `ifdef UART_HAS_BAUDRATE_OUTPUT
-    baud_o,
+   baud_o,
 `endif
-    int_o
+   int_o
 );
 
    input clk;
@@ -411,9 +411,9 @@ module uart_regs (
 
    // Synchronizing and sampling serial RX input
    uart_sync_flops #(
-       .Tp        (1),
-       .width     (1),
-       .init_value(1'b1)
+      .Tp        (1),
+      .width     (1),
+      .init_value(1'b1)
    ) i_uart_sync_flops (
       .rst_i          (wb_rst_i),
       .clk_i          (clk),

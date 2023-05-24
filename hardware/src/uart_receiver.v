@@ -194,21 +194,21 @@
 `include "uart_defines.vh"
 
 module uart_receiver (
-    clk,
-    wb_rst_i,
-    lcr,
-    rf_pop,
-    srx_pad_i,
-    enable,
-    counter_t,
-    rf_count,
-    rf_data_out,
-    rf_error_bit,
-    rf_overrun,
-    rx_reset,
-    lsr_mask,
-    rstate,
-    rf_push_pulse
+   clk,
+   wb_rst_i,
+   lcr,
+   rf_pop,
+   srx_pad_i,
+   enable,
+   counter_t,
+   rf_count,
+   rf_data_out,
+   rf_error_bit,
+   rf_overrun,
+   rx_reset,
+   lsr_mask,
+   rstate,
+   rf_push_pulse
 );
 
    input clk;
@@ -228,28 +228,28 @@ module uart_receiver (
    output [3:0] rstate;
    output rf_push_pulse;
 
-   reg  [                     3:0] rstate;
-   reg  [                     3:0] rcounter16;
-   reg  [                     2:0] rbit_counter;
-   reg  [                     7:0] rshift;  // receiver shift register
-   reg                             rparity;  // received parity
-   reg                             rparity_error;
-   reg                             rframing_error;  // framing error flag
-   reg                             rbit_in;
-   reg                             rparity_xor;
-   reg  [                     7:0] counter_b;  // counts the 0 (low) signals
-   reg                             rf_push_q;
+   reg [3:0] rstate;
+   reg [3:0] rcounter16;
+   reg [2:0] rbit_counter;
+   reg [7:0] rshift;  // receiver shift register
+   reg rparity;  // received parity
+   reg rparity_error;
+   reg rframing_error;  // framing error flag
+   reg rbit_in;
+   reg rparity_xor;
+   reg [7:0] counter_b;  // counts the 0 (low) signals
+   reg rf_push_q;
 
    // RX FIFO signals
-   reg  [`UART_FIFO_REC_WIDTH-1:0] rf_data_in;
+   reg [`UART_FIFO_REC_WIDTH-1:0] rf_data_in;
    wire [`UART_FIFO_REC_WIDTH-1:0] rf_data_out;
-   wire                            rf_push_pulse;
-   reg                             rf_push;
-   wire                            rf_pop;
-   wire                            rf_overrun;
+   wire rf_push_pulse;
+   reg rf_push;
+   wire rf_pop;
+   wire rf_overrun;
    wire [`UART_FIFO_COUNTER_W-1:0] rf_count;
-   wire                            rf_error_bit;  // an error (parity or framing) is inside the fifo
-   wire                            break_error = (counter_b == 0);
+   wire rf_error_bit;  // an error (parity or framing) is inside the fifo
+   wire break_error = (counter_b == 0);
 
    // RX FIFO instance
    uart_rfifo #(`UART_FIFO_REC_WIDTH) fifo_rx (
@@ -266,11 +266,11 @@ module uart_receiver (
       .reset_status(lsr_mask)
    );
 
-   wire       rcounter16_eq_7 = (rcounter16 == 4'd7);
-   wire       rcounter16_eq_0 = (rcounter16 == 4'd0);
-   wire       rcounter16_eq_1 = (rcounter16 == 4'd1);
+   wire rcounter16_eq_7 = (rcounter16 == 4'd7);
+   wire rcounter16_eq_0 = (rcounter16 == 4'd0);
+   wire rcounter16_eq_1 = (rcounter16 == 4'd1);
 
-   wire [3:0] rcounter16_minus_1 = rcounter16 - 1'b1;
+   wire                                         [3:0] rcounter16_minus_1 = rcounter16 - 1'b1;
 
    parameter sr_idle = 4'd0;
    parameter sr_rec_start = 4'd1;

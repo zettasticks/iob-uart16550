@@ -3,40 +3,40 @@
 `include "uart_defines.vh"
 
 module iob_uart16550_sim_wrapper #(
-    parameter MEM_ADDR_W = 32,
-    parameter ADDR_W     = `UART_ADDR_WIDTH,
-    parameter DATA_W     = 32
+   parameter MEM_ADDR_W = 32,
+   parameter ADDR_W     = `UART_ADDR_WIDTH,
+   parameter DATA_W     = 32
 ) (
-    input  wire              clk,       // WISHBONE clock
-    // WISHBONE slave
-    input  wire              wb_rst_i,  // WISHBONE reset
-    input  wire [ADDR_W-1:0] wb_adr_i,  // WISHBONE address input
-    input  wire [      31:0] wb_dat_i,  // WISHBONE data input
-    output wire [      31:0] wb_dat_o,  // WISHBONE data output
-    input  wire              wb_we_i,   // WISHBONE write enable input
-    input  wire              wb_stb_i,  // WISHBONE strobe input
-    input  wire              wb_cyc_i,  // WISHBONE cycle input
-    output wire              wb_ack_o,  // WISHBONE acknowledge output
-    input  wire [       3:0] wb_sel_i,  // WISHBONE byte select input
+   input  wire              clk,       // WISHBONE clock
+   // WISHBONE slave
+   input  wire              wb_rst_i,  // WISHBONE reset
+   input  wire [ADDR_W-1:0] wb_adr_i,  // WISHBONE address input
+   input  wire [      31:0] wb_dat_i,  // WISHBONE data input
+   output wire [      31:0] wb_dat_o,  // WISHBONE data output
+   input  wire              wb_we_i,   // WISHBONE write enable input
+   input  wire              wb_stb_i,  // WISHBONE strobe input
+   input  wire              wb_cyc_i,  // WISHBONE cycle input
+   output wire              wb_ack_o,  // WISHBONE acknowledge output
+   input  wire [       3:0] wb_sel_i,  // WISHBONE byte select input
 
-    // Interrupt
-    output wire int_o,      // Interrupt output
-    // Tx
-    output wire pad_stx_o,  // Transmit Byte
-    // Rx
-    input  wire pad_srx_i,  // Receive Byte
+   // Interrupt
+   output wire int_o,      // Interrupt output
+   // Tx
+   output wire pad_stx_o,  // Transmit Byte
+   // Rx
+   input  wire pad_srx_i,  // Receive Byte
 
 `ifdef UART_HAS_BAUDRATE_OUTPUT
-    output wire baud1_o,
+   output wire baud1_o,
 `endif
 
-    // modem signals
-    output wire rts_o,
-    input  wire cts_i,
-    output wire dtr_o,
-    input  wire dsr_i,
-    input  wire ri_i,
-    input  wire dcd_i
+   // modem signals
+   output wire rts_o,
+   input  wire cts_i,
+   output wire dtr_o,
+   input  wire dsr_i,
+   input  wire ri_i,
+   input  wire dcd_i
 );
 
    // Wires
@@ -61,8 +61,8 @@ module iob_uart16550_sim_wrapper #(
    assign int_o  = uartInterrupt;
 
    iob_wishbone2iob #(
-       .ADDR_W(ADDR_W),
-       .DATA_W(DATA_W)
+      .ADDR_W(ADDR_W),
+      .DATA_W(DATA_W)
    ) wishbone2iob (
       // General input/outputs
       .clk_i        (clk_i),
@@ -88,8 +88,8 @@ module iob_uart16550_sim_wrapper #(
    );
 
    iob_uart16550 #(
-       .DATA_W(DATA_W),  //PARAM & 32 & 64 & CPU data width
-       .ADDR_W(ADDR_W)   //CPU address section width
+      .DATA_W(DATA_W),  //PARAM & 32 & 64 & CPU data width
+      .ADDR_W(ADDR_W)   //CPU address section width
    ) uart16550 (
       //RS232 interface
       .txd(pad_stx_o),
