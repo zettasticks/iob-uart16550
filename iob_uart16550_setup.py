@@ -21,8 +21,8 @@ submodules = {
             "iob_wire",
             "iob_lib.vh",
             "iob_utils.vh",
-            "iob_clkenrst_portmap.vh",
-            "iob_clkenrst_port.vh",
+            "iob_clkenrst_portmap.vs",
+            "iob_clkenrst_port.vs",
         ],
         "modules": ["iob_iob2wishbone", "iob_wishbone2iob"],
     },
@@ -217,21 +217,9 @@ regs = [
 blocks = []
 
 
-def pos_build_remove_unused_files():
-    unused_files = [
-        "../iob_uart16550_V0.10/hardware/src/iob_s_portmap.vh",
-        "../iob_uart16550_V0.10/hardware/src/iob_clkenrst_portmap.vh",
-        "../iob_uart16550_V0.10/hardware/src/iob_uart16550_swreg_inst.vh",
-        "../iob_uart16550_V0.10/hardware/src/iob_uart16550_inst_params.vh",
-    ]
-    for file in unused_files:
-        os.remove(file)
-
-
 # Main function to setup this core and its components
 def main():
     setup.setup(sys.modules[__name__])
-    pos_build_remove_unused_files()
 
 
 if __name__ == "__main__":
