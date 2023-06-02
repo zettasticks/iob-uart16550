@@ -5,9 +5,9 @@
 `include "iob_uart16550_conf.vh"
 
 module iob_uart16550 #(
-   `include "iob_uart16550_params.vh"
+   `include "iob_uart16550_params.vs"
 ) (
-   `include "iob_uart16550_io.vh"
+   `include "iob_uart16550_io.vs"
 );
 
    wire [  `UART_ADDR_WIDTH-1:0] m_wb_adr;
