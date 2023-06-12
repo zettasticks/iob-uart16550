@@ -14,11 +14,12 @@ from iob_clkenrst_port import iob_clkenrst_port
 from iob_iob2wishbone import iob_iob2wishbone
 from iob_wishbone2iob import iob_wishbone2iob
 
+
 class iob_uart16550(iob_module):
     name = "iob_uart16550"
     version = "V0.10"
     flows = "sim emb"
-    setup_dir=os.path.dirname(__file__)
+    setup_dir = os.path.dirname(__file__)
 
     @classmethod
     def _run_setup(cls):
@@ -47,39 +48,39 @@ class iob_uart16550(iob_module):
         # Setup core using LIB function
         setup(cls)
 
-
     @classmethod
     def _setup_confs(cls):
-        super()._setup_confs([
-            # Macros
-
-            # Parameters
-            {
-                "name": "DATA_W",
-                "type": "P",
-                "val": "32",
-                "min": "NA",
-                "max": "NA",
-                "descr": "Data bus width",
-            },
-            {
-                "name": "ADDR_W",
-                "type": "P",
-                "val": "16",
-                "min": "NA",
-                "max": "NA",
-                "descr": "Address bus width",
-            },
-            # Used for regs below
-            {
-                "name": "UART_DATA_W",
-                "type": "P",
-                "val": "8",
-                "min": "NA",
-                "max": "8",
-                "descr": "",
-            },
-        ])
+        super()._setup_confs(
+            [
+                # Macros
+                # Parameters
+                {
+                    "name": "DATA_W",
+                    "type": "P",
+                    "val": "32",
+                    "min": "NA",
+                    "max": "NA",
+                    "descr": "Data bus width",
+                },
+                {
+                    "name": "ADDR_W",
+                    "type": "P",
+                    "val": "16",
+                    "min": "NA",
+                    "max": "NA",
+                    "descr": "Address bus width",
+                },
+                # Used for regs below
+                {
+                    "name": "UART_DATA_W",
+                    "type": "P",
+                    "val": "8",
+                    "min": "NA",
+                    "max": "8",
+                    "descr": "",
+                },
+            ]
+        )
 
     @classmethod
     def _setup_ios(cls):
@@ -120,7 +121,12 @@ class iob_uart16550(iob_module):
                         "n_bits": "1",
                         "descr": "Serial transmit line",
                     },
-                    {"name": "rxd", "type": "I", "n_bits": "1", "descr": "Serial receive line"},
+                    {
+                        "name": "rxd",
+                        "type": "I",
+                        "n_bits": "1",
+                        "descr": "Serial receive line",
+                    },
                     {
                         "name": "cts",
                         "type": "I",
