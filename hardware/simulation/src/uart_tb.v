@@ -212,8 +212,7 @@ module uart_tb;
             @(posedge clk);
             $display("%m : %t : sending : %h", $time(), BYTE_2);
             wbm.wb_wr1(0, 4'h1, BYTE_2);
-            wait (uart_snd.uart16550.uart16550.regs.tstate == 0 &&
-                  uart_snd.uart16550.uart16550.regs.transmitter.tf_count == 0);
+            wait (uart_snd.uart16550.uart16550.regs.tstate == 0 && uart_snd.uart16550.uart16550.regs.transmitter.tf_count == 0);
          end
       join
    end
