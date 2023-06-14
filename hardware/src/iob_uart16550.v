@@ -20,8 +20,8 @@ module iob_uart16550 #(
    wire [  `UART_DATA_WIDTH-1:0] m_wb_dat_resp;
 
    iob_iob2wishbone #(
-      .ADDR_W    (ADDR_W),
-      .DATA_W    (DATA_W),
+      .ADDR_W    (`UART_ADDR_WIDTH),
+      .DATA_W    (`UART_DATA_WIDTH),
       .READ_BYTES(1)
    ) iob2wishbone (
       // General input/outputs
@@ -30,7 +30,7 @@ module iob_uart16550 #(
       .arst_i      (arst_i),
       // IOb-bus input/outputs
       .iob_avalid_i(iob_avalid_i),
-      .iob_addr_i  (iob_addr_i),
+      .iob_addr_i  (iob_addr_i[`UART_ADDR_WIDTH-1:0]),
       .iob_wdata_i (iob_wdata_i),
       .iob_wstrb_i (iob_wstrb_i),
       .iob_rvalid_o(iob_rvalid_o),

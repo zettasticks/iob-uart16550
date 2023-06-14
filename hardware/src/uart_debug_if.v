@@ -120,8 +120,7 @@ module uart_debug_if (  /*AUTOARG*/
    wire [`UART_ADDR_WIDTH-1:0] wb_adr_i;
    reg  [                31:0] wb_dat32_o;
 
-   always @(  /*AUTOSENSE*/ fcr or ier or iir or lcr or lsr or mcr or msr or rf_count or rstate or
-            tf_count or tstate or wb_adr_i)
+   always @(  /*AUTOSENSE*/ fcr or ier or iir or lcr or lsr or mcr or msr or rf_count or rstate or tf_count or tstate or wb_adr_i)
       case (wb_adr_i)
          // 8 + 8 + 4 + 4 + 8
          5'b01000: wb_dat32_o = {msr, lcr, iir, ier, lsr};
