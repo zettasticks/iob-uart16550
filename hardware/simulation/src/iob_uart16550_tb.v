@@ -3,7 +3,7 @@
 `include "iob_utils.vh"
 `include "uart_defines.vh"
 
-module uart_tb;
+module iob_uart16550_tb;
 
    reg                                                 clkr;
    reg                                                 wb_rst_ir;

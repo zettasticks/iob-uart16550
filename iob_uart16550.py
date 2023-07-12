@@ -9,8 +9,6 @@ from setup import setup
 # Submodules
 from iob_lib import iob_lib
 from iob_utils import iob_utils
-from iob_clkenrst_portmap import iob_clkenrst_portmap
-from iob_clkenrst_port import iob_clkenrst_port
 from iob_iob2wishbone import iob_iob2wishbone
 from iob_wishbone2iob import iob_wishbone2iob
 
@@ -22,31 +20,17 @@ class iob_uart16550(iob_module):
     setup_dir = os.path.dirname(__file__)
 
     @classmethod
-    def _run_setup(cls):
+    def _specific_setup(cls):
         # Hardware headers & modules
         iob_module.generate("iob_s_port")
         iob_module.generate("iob_s_portmap")
         iob_module.generate("iob_wire")
+        iob_module.generate("clk_en_rst_portmap")
+        iob_module.generate("clk_en_rst_port")
         iob_lib.setup()
         iob_utils.setup()
-        iob_clkenrst_portmap.setup()
-        iob_clkenrst_port.setup()
         iob_iob2wishbone.setup()
         iob_wishbone2iob.setup()
-
-        cls._setup_confs()
-        cls._setup_ios()
-        cls._setup_regs()
-        cls._setup_block_groups()
-
-        # Verilog modules instances
-        # TODO
-
-        # Copy sources of this module to the build directory
-        super()._run_setup()
-
-        # Setup core using LIB function
-        setup(cls)
 
     @classmethod
     def _setup_confs(cls):
