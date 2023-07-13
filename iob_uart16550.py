@@ -4,7 +4,6 @@ import os
 import sys
 
 from iob_module import iob_module
-from setup import setup
 
 # Submodules
 from iob_lib import iob_lib
@@ -20,17 +19,21 @@ class iob_uart16550(iob_module):
     setup_dir = os.path.dirname(__file__)
 
     @classmethod
-    def _specific_setup(cls):
-        # Hardware headers & modules
-        iob_module.generate("iob_s_port")
-        iob_module.generate("iob_s_portmap")
-        iob_module.generate("iob_wire")
-        iob_module.generate("clk_en_rst_portmap")
-        iob_module.generate("clk_en_rst_port")
-        iob_lib.setup()
-        iob_utils.setup()
-        iob_iob2wishbone.setup()
-        iob_wishbone2iob.setup()
+    def _create_submodules_list(cls):
+        """Create submodules list with dependencies of this module"""
+        super()._create_submodules_list(
+            [
+                "iob_s_port",
+                "iob_s_portmap",
+                "iob_wire",
+                "clk_en_rst_portmap",
+                "clk_en_rst_port",
+                iob_lib,
+                iob_utils,
+                iob_iob2wishbone,
+                iob_wishbone2iob,
+            ]
+        )
 
     @classmethod
     def _setup_confs(cls):
