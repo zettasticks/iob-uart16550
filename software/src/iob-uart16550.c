@@ -9,7 +9,7 @@ void uart16550_txwait() {
 char uart16550_txready() {
     uint8_t status = 0;
     status = *((volatile uint8_t *)(base + 5));
-    return (status & (1<<6));
+    return (status & (0x01<<6));
 }
 
 void uart16550_putc(char c) {
@@ -25,7 +25,7 @@ void uart16550_rxwait() {
 char uart16550_rxready() {
     uint8_t status = 0;
     status = *((volatile uint8_t *)(base + 5));
-    return (status & (1));
+    return (status & (0x01));
 }
 
 char uart16550_getc() {
@@ -44,7 +44,7 @@ void uart16550_init(int base_address, uint16_t div) {
   // Set bit 7 to ‘1’ to allow access to the Divisor Latches.
   uint8_t lcr = 0;
   lcr = *((volatile uint8_t *)(base + 3));
-  lcr = (lcr|128);
+  lcr = (lcr | 0x80);
   *((volatile uint8_t *)(base + 3)) = lcr;
 
   // Set the Divisor Latches, MSB first, LSB next.
@@ -54,17 +54,17 @@ void uart16550_init(int base_address, uint16_t div) {
 
   // Set bit 7 of LCR to ‘0’ to disable access to Divisor Latches.
   // At this time the transmission engine starts working and data can be sent and received.
-  lcr = (lcr&127);
+  lcr = (lcr & 0x7F);
   *((volatile uint8_t *)(base + 3)) = lcr;
 
   // Set the FIFO trigger level. Generally, higher trigger level values produce less
   // interrupt to the system, so setting it to 14 bytes is recommended if the system
   // responds fast enough.
-  *((volatile uint8_t *)(base + 2)) = 192;
+  *((volatile uint8_t *)(base + 2)) = 0xC0;
 
   // Enable desired interrupts by setting appropriate bits in the Interrupt Enable
   // register.
-  *((volatile uint8_t *)(base + 1)) = 3;
+  *((volatile uint8_t *)(base + 1)) = 0x03;
 
 }
 
