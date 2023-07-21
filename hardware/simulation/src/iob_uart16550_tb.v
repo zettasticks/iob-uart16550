@@ -132,6 +132,10 @@ module iob_uart16550_tb;
       srx1_ir = pad_stx_o;
    end
 
+   always @(stx1_o) begin
+      pad_srx_ir = stx1_o;
+   end
+
 `ifdef VCD
    initial begin
       $dumpfile("uut.vcd");
