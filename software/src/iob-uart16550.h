@@ -18,35 +18,35 @@ static int base;
 //UART functions
 
 //Reset UART and set the division factor
-void uart_init(int base_address, uint16_t div);
+void uart16550_init(int base_address, uint16_t div);
 
 //Close transmission
-void uart_finish();
+void uart16550_finish();
 
 //TX FUNCTIONS
 //Check if tx is ready
-char uart_txready();
+char uart16550_txready();
 //Wait for tx to be ready
-void uart_txwait();
+void uart16550_txwait();
 
 //RX FUNCTIONS
 //Check if rx is ready
-char uart_rxready();
+char uart16550_rxready();
 //Wait for rx to be ready
-void uart_rxwait();
+void uart16550_rxwait();
 
 
 //Print char
-void uart_putc(char c);
+void uart16550_putc(char c);
 
 //Print string
-void uart_puts(const char *s);
+void uart16550_puts(const char *s);
 
 //Send file
-void uart_sendfile(char* file_name, int file_size, char *mem);
+void uart16550_sendfile(char* file_name, int file_size, char *mem);
 
 //Get char
-char uart_getc();
+char uart16550_getc();
 
 //Receive file
-int uart_recvfile(char* file_name, char *mem);
+int uart16550_recvfile(char* file_name, char *mem);
