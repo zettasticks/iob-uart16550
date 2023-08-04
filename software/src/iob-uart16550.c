@@ -68,6 +68,11 @@ void uart16550_init(int base_address, uint16_t div) {
 
 }
 
+// Change UART base
+void uart16550_base(int base_address) {
+	base = base_address;
+}
+
 void uart16550_finish() {
   uart16550_putc(EOT);
   uart16550_txwait();
