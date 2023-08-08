@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 
 from iob_module import iob_module
 
 # Submodules
-from iob_lib import iob_lib
 from iob_utils import iob_utils
 from iob_iob2wishbone import iob_iob2wishbone
 from iob_wishbone2iob import iob_wishbone2iob
@@ -28,7 +26,6 @@ class iob_uart16550(iob_module):
                 {"interface": "iob_wire"},
                 {"interface": "clk_en_rst_s_s_portmap"},
                 {"interface": "clk_en_rst_s_port"},
-                iob_lib,
                 iob_utils,
                 iob_iob2wishbone,
                 iob_wishbone2iob,
