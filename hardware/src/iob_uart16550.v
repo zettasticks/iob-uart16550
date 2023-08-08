@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
 `include "uart_defines.vh"
-`include "iob_lib.vh"
 `include "iob_uart16550_conf.vh"
 
 module iob_uart16550 #(
