@@ -92,10 +92,10 @@ module iob_uart16550_sim_wrapper #(
       .ADDR_W(ADDR_W)   //CPU address section width
    ) uart16550 (
       //RS232 interface
-      .txd(pad_stx_o),
-      .rxd(pad_srx_i),
-      .rts(rts_o),
-      .cts(cts_i),
+      .txd_o(pad_stx_o),
+      .rxd_i(pad_srx_i),
+      .rts_o(rts_o),
+      .cts_i(cts_i),
 
       //CPU interface
       .clk_i       (clk_i),
@@ -109,7 +109,7 @@ module iob_uart16550_sim_wrapper #(
       .iob_rdata_o (m_rdata),
       .iob_ready_o (m_ready),
 
-      .interrupt(uartInterrupt)
+      .interrupt_o(uartInterrupt)
    );
 
 endmodule

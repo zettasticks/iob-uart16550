@@ -58,15 +58,15 @@ module iob_uart16550 #(
       .wb_dat_i (m_wb_dat_req),
       .wb_ack_o (m_wb_ack),
       .wb_dat_o (m_wb_dat_resp),
-      .int_o    (interrupt),
+      .int_o    (interrupt_o),
 `ifdef UART_HAS_BAUDRATE_OUTPUT
       .baud1_o  (),
 `endif
       // UART signals
-      .srx_pad_i(rxd),
-      .stx_pad_o(txd),
-      .rts_pad_o(rts),
-      .cts_pad_i(cts),
+      .srx_pad_i(rxd_i),
+      .stx_pad_o(txd_o),
+      .rts_pad_o(rts_o),
+      .cts_pad_i(cts_i),
       .dtr_pad_o(),
       .dsr_pad_i(1'b1),
       .ri_pad_i (1'b0),
