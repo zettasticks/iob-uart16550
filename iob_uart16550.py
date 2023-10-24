@@ -153,7 +153,7 @@ class iob_uart16550(iob_module):
                         "rst_val": 0,
                         "addr": 0x8000,
                         "log2n_items": 0,
-                        "autologic": True,
+                        "autoreg": True,
                         "descr": "Dummy register.",
                     },
                 ],
