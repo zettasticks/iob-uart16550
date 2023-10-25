@@ -141,6 +141,7 @@ class iob_uart16550(iob_module):
 
     @classmethod
     def _setup_regs(cls):
+        cls.autoaddr = False
         cls.regs += [
             {
                 "name": "uart16550",
