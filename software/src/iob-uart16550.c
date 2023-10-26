@@ -42,9 +42,8 @@ void uart16550_init(int base_address, uint16_t div) {
 
   // Set the Line Control Register to the desired line control parameters.
   // Set bit 7 to ‘1’ to allow access to the Divisor Latches.
-  uint8_t lcr = 3;
-  // Disabled reading from lcr reg, because sometimes it uses wrong value. Not sure why. Maybe reg is not reset correctly?
-  //lcr = *((volatile uint8_t *)(base + 3));
+  uint8_t lcr = 0;
+  lcr = *((volatile uint8_t *)(base + 3));
   lcr = (lcr | 0x80);
   *((volatile uint8_t *)(base + 3)) = lcr;
 
