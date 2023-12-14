@@ -46,7 +46,7 @@ module iob_uart16550_sim_wrapper #(
    wire                arst_i;
    wire                uartInterrupt;
    // // Master interface
-   wire                m_avalid;
+   wire                m_valid;
    wire [  ADDR_W-1:0] m_address;
    wire [  DATA_W-1:0] m_wdata;
    wire [DATA_W/8-1:0] m_wstrb;
@@ -78,7 +78,7 @@ module iob_uart16550_sim_wrapper #(
       .wb_ack_o     (wb_ack_o),
       .wb_data_o    (wb_dat_o),
       // IOb-bus input/outputs
-      .iob_avalid_o (m_avalid),
+      .iob_valid_o (m_valid),
       .iob_address_o(m_address),
       .iob_wdata_o  (m_wdata),
       .iob_wstrb_o  (m_wstrb),
@@ -101,7 +101,7 @@ module iob_uart16550_sim_wrapper #(
       .clk_i       (clk_i),
       .cke_i       (cke_i),
       .arst_i      (arst_i),
-      .iob_avalid_i(m_avalid),
+      .iob_valid_i(m_valid),
       .iob_addr_i  (m_address),
       .iob_wdata_i (m_wdata),
       .iob_wstrb_i (m_wstrb),
