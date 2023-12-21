@@ -1,1 +1,1 @@
-submodules/LIB/nix/shell.nix
+../IOBSOC/submodules/LIB/default.nix
