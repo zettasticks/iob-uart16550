@@ -181,6 +181,8 @@ module uart_rfifo (
    output [fifo_counter_w-1:0] count;
    output error_bit;
 
+   genvar i;
+
    wire [    fifo_width-1:0]                          data_out;
    wire [               7:0]                          data8_out;
    // flags FIFO
@@ -210,46 +212,11 @@ module uart_rfifo (
 
    always @(posedge clk or posedge wb_rst_i)  // synchronous FIFO
        begin
-      if (wb_rst_i) begin
+      if (wb_rst_i | fifo_reset) begin
          top      <= #1 0;
          bottom   <= #1 1'b0;
          count    <= #1 0;
-         fifo[0]  <= #1 0;
-         fifo[1]  <= #1 0;
-         fifo[2]  <= #1 0;
-         fifo[3]  <= #1 0;
-         fifo[4]  <= #1 0;
-         fifo[5]  <= #1 0;
-         fifo[6]  <= #1 0;
-         fifo[7]  <= #1 0;
-         fifo[8]  <= #1 0;
-         fifo[9]  <= #1 0;
-         fifo[10] <= #1 0;
-         fifo[11] <= #1 0;
-         fifo[12] <= #1 0;
-         fifo[13] <= #1 0;
-         fifo[14] <= #1 0;
-         fifo[15] <= #1 0;
-      end else if (fifo_reset) begin
-         top      <= #1 0;
-         bottom   <= #1 1'b0;
-         count    <= #1 0;
-         fifo[0]  <= #1 0;
-         fifo[1]  <= #1 0;
-         fifo[2]  <= #1 0;
-         fifo[3]  <= #1 0;
-         fifo[4]  <= #1 0;
-         fifo[5]  <= #1 0;
-         fifo[6]  <= #1 0;
-         fifo[7]  <= #1 0;
-         fifo[8]  <= #1 0;
-         fifo[9]  <= #1 0;
-         fifo[10] <= #1 0;
-         fifo[11] <= #1 0;
-         fifo[12] <= #1 0;
-         fifo[13] <= #1 0;
-         fifo[14] <= #1 0;
-         fifo[15] <= #1 0;
+         fifo     <= #1 '{default:0};
       end else begin
          case ({
             push, pop
@@ -291,27 +258,14 @@ module uart_rfifo (
    // Additional logic for detection of error conditions (parity and framing) inside the FIFO
    // for the Line Status Register bit 7
 
-   wire [2:0] word0 = fifo[0];
-   wire [2:0] word1 = fifo[1];
-   wire [2:0] word2 = fifo[2];
-   wire [2:0] word3 = fifo[3];
-   wire [2:0] word4 = fifo[4];
-   wire [2:0] word5 = fifo[5];
-   wire [2:0] word6 = fifo[6];
-   wire [2:0] word7 = fifo[7];
-
-   wire [2:0] word8 = fifo[8];
-   wire [2:0] word9 = fifo[9];
-   wire [2:0] word10 = fifo[10];
-   wire [2:0] word11 = fifo[11];
-   wire [2:0] word12 = fifo[12];
-   wire [2:0] word13 = fifo[13];
-   wire [2:0] word14 = fifo[14];
-   wire [2:0] word15 = fifo[15];
-
    // a 1 is returned if any of the error bits in the fifo is 1
-   assign error_bit = |(word0[2:0] | word1[2:0] | word2[2:0] | word3[2:0] | word4[2:0] | word5[
-                        2:0] | word6[2:0] | word7[2:0] | word8[2:0] | word9[2:0] | word10[2:0] |
-                        word11[2:0] | word12[2:0] | word13[2:0] | word14[2:0] | word15[2:0]);
+   wire [3*fifo_depth-1:0] error_bits;
+   generate
+      for (i = 0; i < fifo_depth; i = i + 1) begin: gen_error_bits
+         assign error_bits[i*3+:3] = fifo[i][2:0];
+      end
+   endgenerate
+   assign error_bit = |error_bits;
+
 
 endmodule
