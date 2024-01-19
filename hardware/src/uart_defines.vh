@@ -228,9 +228,9 @@
 // FIFO parameter defines
 
 `define UART_FIFO_WIDTH 8
-`define UART_FIFO_DEPTH 16
-`define UART_FIFO_POINTER_W 4
-`define UART_FIFO_COUNTER_W 5
+`define UART_FIFO_DEPTH 256
+`define UART_FIFO_POINTER_W $clog2(`UART_FIFO_DEPTH)
+`define UART_FIFO_COUNTER_W $clog2(`UART_FIFO_DEPTH)+1
 // receiver fifo has width 11 because it has break, parity and framing error bits
 `define UART_FIFO_REC_WIDTH 11
 
