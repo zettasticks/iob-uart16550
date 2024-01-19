@@ -216,7 +216,6 @@ module uart_rfifo (
          top      <= #1 0;
          bottom   <= #1 1'b0;
          count    <= #1 0;
-         fifo     <= #1 '{default:0};
       end else begin
          case ({
             push, pop
