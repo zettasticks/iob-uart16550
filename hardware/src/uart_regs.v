@@ -363,8 +363,12 @@ module uart_regs (
    assign loopback                                    = mcr[4];
 
    // assign modem outputs
-   assign rts_pad_o                                   = ~mcr[`UART_MC_RTS];
+   //assign rts_pad_o                                   = ~mcr[`UART_MC_RTS];
    assign dtr_pad_o                                   = ~mcr[`UART_MC_DTR];
+
+   wire rf_overrun;
+   // RTS mod: This signal is now controlled purely by hardware.
+   assign rts_pad_o                                   = ~rf_overrun; //TODO: Maybe use ~FIFO_FULL instead?
 
    // Interrupt signals
    wire                            rls_int;  // receiver line status interrupt
@@ -397,7 +401,9 @@ module uart_regs (
       .lcr      (lcr),
       .tf_push  (tf_push),
       .wb_dat_i (wb_dat_i),
-      .enable   (enable),
+      //.enable   (enable),
+      // CTS mod: Transmitter only works when CTS is high (controlled purely by hardware)
+      .enable   (enable && cts_pad_i),
       .tx_reset (tx_reset),
       .lsr_mask (lsr_mask),
       .stx_pad_o(serial_out),
@@ -423,7 +429,6 @@ module uart_regs (
    wire serial_in = loopback ? serial_out : srx_pad;
    assign stx_pad_o = loopback ? 1'b1 : serial_out;
 
-   wire rf_overrun;
    wire rf_push_pulse;
 
    // Receiver Instance
