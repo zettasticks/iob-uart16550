@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "iob-uart16550.h"
 
+static int base;
+
 //TX FUNCTIONS
 void uart16550_txwait() {
     while(!uart16550_txready());
@@ -65,12 +67,13 @@ void uart16550_init(int base_address, uint16_t div) {
   // Enable desired interrupts by setting appropriate bits in the Interrupt Enable
   // register.
   *((volatile uint8_t *)(base + 1)) = 0x03;
-
 }
 
 // Change UART base
-void uart16550_base(int base_address) {
+int uart16550_base(int base_address) {
+  int previous = base;
 	base = base_address;
+  return previous;
 }
 
 void uart16550_finish() {

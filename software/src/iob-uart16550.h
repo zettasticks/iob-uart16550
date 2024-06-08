@@ -13,15 +13,13 @@
 #define FTX 7 //transmit file
 #define FRX 8 //receive file
 
-static int base;
-
 //UART functions
 
 //Reset UART and set the division factor
 void uart16550_init(int base_address, uint16_t div);
 
-// Change UART base
-void uart16550_base(int base_address);
+// Change UART base, returns previous base
+int uart16550_base(int base_address);
 
 //Close transmission
 void uart16550_finish();
